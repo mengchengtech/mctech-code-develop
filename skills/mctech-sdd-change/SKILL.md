@@ -1,97 +1,232 @@
 ---
 name: mctech-sdd-change
-description: 分析实施中的需求变化，更新 OpenSpec 并重新规划剩余任务
-stage: change_management
-mode: openspec-write
-input:
-  - change_request
-  - current_change
-  - task_status
-  - repository
-  - existing_openspec
-output:
-  - impact_analysis
-  - spec_changes
-  - design_changes
-  - task_changes
-  - migration_plan
-side_effects:
-  - openspec
-authority: latest_approved_spec
-next:
-  - mctech-sdd-plan
-  - mctech-sdd-implement
+description: Safely handle requirement, behavioral, specification, design, or architecture changes after an OpenSpec change has already been planned or partially implemented. Analyze impact before updating the approved specification and tasks.
+argument-hint: "[change-request]"
+disable-model-invocation: true
 ---
 
-当前 OpenSpec Change 已经处于实施阶段。
+# MCTech SDD Change
 
-现在出现新的需求变化：
+你现在处于 SDD 的变更管理阶段。
 
-{{CHANGE_REQUEST}}
+新的变化：
 
-当前任务状态：
+$ARGUMENTS
 
-{{TASK_STATUS}}
+## 目标
 
-不要立即修改代码。
+在不破坏已经完成工作的情况下，安全处理需求或 Spec 变化。
 
-请进入需求变更分析流程。
+## 重要原则
 
-### Phase 1：Impact Analysis
+需求变化 ≠ 实现 Bug。
 
-分析：
+如果只是代码没有按照 Spec 实现：
 
-1. Proposal 影响
-2. Design 影响
-3. Spec 影响
-4. 已完成 Task 影响
-5. 当前 Task 影响
-6. 未执行 Task 影响
-7. API 影响
-8. 数据库影响
-9. 前端影响
-10. 缓存影响
-11. 测试影响
+/mctech-sdd-fix
 
-### Phase 2：Change Classification
+只有以下情况进入本 Skill：
 
-将影响分类为：
+- 新业务需求
+- 业务规则变化
+- Spec 变化
+- API 行为变化
+- Design 变化
+- Architecture 变化
 
-- 不受影响
-- 实现修正
-- Spec 修改
-- Design 修改
-- 已完成 Task 需要补偿
-- 当前 Task 需要修改
-- 未执行 Task 需要修改
-- 新增 Task
-- 删除 Task
-- 需要架构师决策
+## Phase 1：Impact Analysis
 
-### Phase 3：Update
+必须分析：
 
-只有需求变化确认后，才：
+### Proposal
 
-1. 更新 Proposal
-2. 更新 Design
-3. 更新 Spec
-4. 更新 Tasks
-5. 更新 Task 依赖关系
+变化是否改变原始目标？
 
-重要：
+### Design
 
-- 不要因为需求变化就重新执行所有 Task。
-- 不要因为 Task 已完成就拒绝需求变化。
-- 不要自行改变架构决策。
-- 不要直接修改代码。
-- 保留必要的变更原因和历史。
+是否改变：
 
-最终输出：
+- 架构
+- 模块职责
+- 数据流
+- 调用关系
 
-1. Change Impact
-2. Spec Changes
-3. Design Changes
-4. Task Changes
-5. New Tasks
-6. Obsolete Tasks
-7. Need Decision
+### Spec
+
+哪些 Spec 需要修改？
+
+### Tasks
+
+分别判断：
+
+- 已完成 Task
+- 正在执行 Task
+- 未执行 Task
+
+### Code
+
+检查已经产生的代码变化。
+
+### Tests
+
+检查已有测试是否仍然有效。
+
+### Data
+
+检查：
+
+- Schema
+- Migration
+- 数据兼容性
+
+### API
+
+检查：
+
+- Request
+- Response
+- Status
+- Backward Compatibility
+
+### Cache
+
+检查缓存行为。
+
+### Migration / Rollback
+
+检查迁移和回滚影响。
+
+## Phase 2：Change Classification
+
+将变化分类：
+
+- IMPLEMENTATION_CHANGE
+- SPEC_CHANGE
+- DESIGN_CHANGE
+- ARCHITECTURE_CHANGE
+- NEW_REQUIREMENT
+- TASK_CHANGE
+- OUT_OF_SCOPE
+
+## Phase 3：更新 OpenSpec
+
+根据影响分析更新：
+
+1. Proposal
+2. Design
+3. Spec
+4. Tasks
+5. Dependencies
+
+不得直接修改业务代码。
+
+## 已完成 Task
+
+如果需求变化影响已经完成的 Task，必须明确：
+
+Task
+→ 旧行为
+→ 新行为
+→ 影响
+→ 补偿 Task
+
+不得简单删除历史 Task。
+
+可以新增补偿任务，例如：
+
+Task X.1
+Task X.2
+
+作为补偿任务。
+
+## 正在执行 Task
+
+如果当前 Task 已经无法按照新 Spec 继续：
+
+停止继续实现。
+
+重新调整 Task 后再执行。
+
+## 未执行 Task
+
+可以：
+
+- 修改
+- 合并
+- 拆分
+- 删除
+- 增加
+
+但必须说明原因。
+
+## 架构变化
+
+如果变化涉及重大架构调整：
+
+不要自行确定最终方案。
+
+先进入：
+
+/mctech-sdd-decide
+
+## 严格禁止
+
+不得：
+
+- 直接修改业务代码
+- 偷改 Spec
+- 删除旧决策
+- 把需求变化伪装成 Bug Fix
+- 为了减少工作量而降低需求
+- 自动重新执行整个 Change
+
+## 输出
+
+# Change Impact Report
+
+## Change Request
+
+## Classification
+
+## Proposal Impact
+
+## Design Impact
+
+## Spec Impact
+
+## Completed Task Impact
+
+## Current Task Impact
+
+## Pending Task Impact
+
+## Code Impact
+
+## Test Impact
+
+## Data / Migration Impact
+
+## API Impact
+
+## Cache Impact
+
+## Rollback Impact
+
+## Updated OpenSpec
+
+## New Tasks
+
+## Modified Tasks
+
+## Obsolete Tasks
+
+## Decision Required
+
+## Next Action
+
+可能的下一步：
+
+/mctech-sdd-decide
+/mctech-sdd-plan
+/mctech-sdd-implement
+/mctech-sdd-verify

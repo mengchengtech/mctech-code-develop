@@ -1,84 +1,143 @@
 ---
 name: mctech-sdd-spec
-description: 将需求和已确认的架构决策转化为正式 OpenSpec Change
-stage: specification
-mode: read-only
-input:
-  - user_request
-  - exploration
-  - analysis
-  - decisions
-  - existing_openspec
-output:
-  - proposal
-  - design
-  - specs
-side_effects: openspec_only
-authority: specification
-next:
-  - mctech-sdd-plan
+description: Create or update OpenSpec proposal, design, and behavioral specifications from requirements, exploration results, and approved architecture decisions. Use before implementation to establish the authoritative expected behavior.
+argument-hint: "[change-or-feature]"
+disable-model-invocation: true
 ---
 
-你现在处于 OpenSpec 规范阶段。
+# MCTech SDD Spec
 
-当前任务：
-{{TASK}}
+你现在处于 SDD 的规范定义阶段。
 
-请基于：
+## 目标
 
-1. Exploration
-2. Analysis
-3. 已确认的 Architecture Decision
-4. 当前需求
+明确系统应该如何工作，并将其形成 OpenSpec 可验证的规范。
 
-创建或更新 OpenSpec Change。
+Change / Feature：
 
-要求：
+$ARGUMENTS
 
-### Proposal
-说明：
-- 为什么需要修改
+## 权威顺序
+
+本阶段按照以下优先级理解系统目标：
+
+1. 已确认需求
+2. 架构决策
+3. 最新 OpenSpec
+
+旧文档、旧代码不能覆盖最新批准的 Spec。
+
+如果需求、决策和 Spec 冲突：
+
+停止并报告。
+
+不要自行选择。
+
+## Proposal
+
+明确：
+
+- 背景
 - 当前问题
-- 修改目标
+- 目标
+- 修改范围
 - 非目标
+- 影响范围
 
-### Design
-说明：
-- 整体架构
-- 数据模型
-- 核心流程
-- API
+## Design
+
+描述：
+
+- 系统架构
 - 模块职责
+- 调用关系
+- 数据流
+- API
+- 数据模型
 - 缓存
+- 消息
+- 外部依赖
 - 兼容性
 - 迁移
 - 回滚
 
-### Spec
-描述系统必须满足的行为。
+不要把无关的实现细节塞进 Design。
+
+## Spec
+
+Spec 必须描述系统的可观察行为。
 
 优先使用：
+
 Given
 When
 Then
 
-Spec 应该描述：
-“系统应该怎样工作”，
-而不是：
-“代码应该怎么写”。
+例如：
 
-重要：
+Given 用户没有 ORDER_EDIT 权限
+When 用户修改订单
+Then 系统必须拒绝请求
 
-- 不修改业务代码。
-- 不执行 tasks。
-- 不自行改变已经确认的架构决策。
-- 如果需求存在冲突，先报告。
-- Spec 必须覆盖已经确认的关键需求。
-- 检查 Proposal、Design、Spec 之间是否一致。
+对于权限、认证、验权等安全敏感功能，必须明确：
 
-完成后检查：
+- 允许条件
+- 拒绝条件
+- 边界条件
+- 身份变化
+- 租户变化
+- 公司切换
+- 缓存失效
+- 越权行为
+- 旧权限模型行为
 
-1. 是否遗漏需求
-2. 是否存在相互矛盾的 Spec
-3. Design 是否能够支撑 Spec
-4. 是否存在无法实现的要求
+## Spec 完整性检查
+
+检查：
+
+1. 每个需求是否有 Spec。
+2. 每个关键行为是否可验证。
+3. 是否存在相互冲突的 Spec。
+4. 是否遗漏异常场景。
+5. 是否遗漏兼容性要求。
+6. 是否遗漏迁移要求。
+7. 是否遗漏回滚要求。
+8. 是否存在未确认的假设。
+
+## 严格禁止
+
+不得：
+
+- 修改业务代码
+- 执行实现 Task
+- 自行改变架构决策
+- 将推测写成 MUST
+- 为了方便实现而降低需求约束
+
+## 输出
+
+生成或更新项目已有 OpenSpec Change 中对应的：
+
+- Proposal
+- Design
+- Spec
+
+并报告：
+
+# Spec Summary
+
+## Requirements
+
+## Design
+
+## Behavioral Scenarios
+
+## Compatibility
+
+## Migration
+
+## Rollback
+
+## Open Questions
+
+## Spec Coverage

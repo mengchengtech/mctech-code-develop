@@ -1,134 +1,146 @@
 ---
 name: mctech-sdd-fix
-description: 根据 Verify 结果修复实现缺陷，并重新验证
-stage: remediation
-mode: write
-input:
-  - verification_report
-  - change
-  - task
-  - proposal
-  - design
-  - specs
-  - repository
-output:
-  - code_changes
-  - test_changes
-  - fix_report
-side_effects:
-  - source_code
-  - tests
-authority: latest_spec
-next:
-  - mctech-sdd-verify
-  - mctech-sdd-change
+description: Fix implementation defects identified by MCTech SDD Verify without changing approved requirements, specifications, architecture, or task scope. Use after verification reports an implementation bug, test defect, or contract drift.
+argument-hint: "[verification-issue-or-task]"
+disable-model-invocation: true
 ---
-你现在处于缺陷修复阶段。
 
-请根据最新的 /mctech-sdd-verify 验证结果修复实现问题。
+# MCTech SDD Fix
 
-当前 OpenSpec Change：
-{{CHANGE}}
+你现在处于 SDD 的缺陷修复阶段。
 
-当前 Task：
-{{TASK}}
+修复目标：
 
-Verify Report：
-{{VERIFY_REPORT}}
+$ARGUMENTS
 
-请严格按照以下流程执行：
+## 输入
 
-## 1. 定位问题
+必须优先读取最新：
 
-找到 Verify 报告中的：
+1. Verification Report
+2. OpenSpec
+3. Spec
+4. Design
+5. Architecture Decision
+6. 对应 Task
+7. 当前代码
 
-- FAIL
-- FIX_REQUIRED
-- IMPLEMENTATION_BUG
-- CONTRACT_DRIFT
+## 允许修复的问题
 
-逐项分析。
-
-对于每个问题：
-
-1. 找到对应 Spec。
-2. 找到对应 Task。
-3. 找到实际代码。
-4. 判断实际实现与 Spec 的差异。
-5. 找出根因。
-
-## 2. 判断是否允许直接修复
-
-只有以下情况允许直接修复：
+只允许直接处理：
 
 - IMPLEMENTATION_BUG
 - TEST_DEFECT
 - CONTRACT_DRIFT
-- 当前 Task 范围内的实现问题
+- CONFIGURATION_DEFECT
+- 当前 Task 范围内的明确实现错误
 
-以下情况禁止自行修改：
+## 禁止自行处理
+
+以下问题不能直接修复：
 
 - SPEC_DEFECT
+- DESIGN_CHANGE
 - ARCHITECTURE_PROBLEM
 - NEW_REQUIREMENT
-- DESIGN_CHANGE
 - OUT_OF_SCOPE
 
-如果属于禁止自行修改的情况：
+如果属于以上类型：
 
-停止执行，并报告原因以及建议使用的下一步命令。
+停止修改，并报告应该使用的下一步 Skill。
 
-## 3. 执行修复
+## 修复步骤
 
-对于允许修复的问题：
+### 1. Locate
 
-1. 只修改问题涉及的代码。
-2. 不扩大当前 Task 范围。
-3. 不改变已经确认的架构决策。
-4. 不修改 Spec。
-5. 不为了让测试通过而降低业务约束。
-6. 同时补充或修改测试。
-7. 保持已有功能兼容。
+找到：
 
-## 4. 验证
+- Verify Issue
+- 对应 Spec
+- 对应 Task
+- 实际代码
 
-修复完成后：
+### 2. Root Cause
 
-1. 执行失败的测试。
-2. 执行相关单元测试。
-3. 执行必要的集成测试。
-4. 检查是否引入新的失败。
+说明：
 
-## 5. 输出
+Spec
+→ Expected Behavior
+→ Actual Behavior
+→ Root Cause
 
-输出：
+### 3. Minimal Fix
 
-### Fixed
+使用最小修改原则：
 
-已经修复的问题。
+- 不扩大范围
+- 不改变架构
+- 不改变 Spec
+- 不顺便重构无关代码
 
-### Changed Files
+### 4. Tests
 
-修改的文件。
+必须增加或调整能够复现问题的测试。
 
-### Tests
+至少覆盖：
 
-执行的测试及结果。
+- 原失败场景
+- 正常场景
+- 相关边界场景
 
-### Spec Compliance
+### 5. Verification
 
-说明修复后是否符合 Spec。
+执行：
 
-### Remaining Issues
+1. 原失败测试
+2. 相关测试
+3. 必要的集成测试
+4. 必要的构建 / 类型检查
 
-仍然存在的问题。
+## 特别规则
 
-### Next Action
+如果为了修复问题必须改变 Spec：
 
-只能从以下选项选择：
+不要修改 Spec。
 
-- VERIFY_AGAIN
-- AI_CHANGE_REQUIRED
-- DECISION_REQUIRED
-- ENVIRONMENT_FIX_REQUIRED
-- OUT_OF_SCOPE
+停止并建议：
+
+/mctech-sdd-change
+
+如果必须改变架构：
+
+/mctech-sdd-decide
+
+如果需要修改另一个 Task：
+
+停止并报告。
+
+## 输出
+
+# Fix Report
+
+## Issue
+
+## Classification
+
+## Root Cause
+
+## Fix
+
+## Changed Files
+
+## Tests Added / Changed
+
+## Tests Executed
+
+## Result
+
+## Spec Compliance
+
+## Remaining Issues
+
+## Next Action
+
+通常：
+
+/mctech-sdd-verify

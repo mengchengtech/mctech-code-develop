@@ -33,17 +33,21 @@ AI 规范驱动开发流程是一套基于 OpenSpec、SDD（Specification-Driven
 
 ## 命令速查表
 
-| skills                                             | 职责         | 一句话记忆                 | 改代码 |
-| -------------------------------------------------- | ------------ | -------------------------- | ------ |
-| [`mctech-sdd-explore`](skills/mctech-sdd-explore/) | 负责事实     | **现在是什么？**           | ❌      |
-| [`mctech-sdd-analyze`](skills/mctech-sdd-analyze/) | 负责方案     | **问题是什么？怎么解决？** | ❌      |
-| [`mctech-sdd-decide`](skills/decide)               | 负责决策     | **最终选哪个？**           | ❌      |
-| [`mctech-sdd-spec`](skills/spec)                   | 负责契约     | **最终必须是什么？**       | ❌      |
-| [`mctech-sdd-plan`](skills/plan)                   | 负责拆解     | **怎么拆着做？**           | ❌      |
-| [`mctech-sdd-implement`](skills/implement)         | 负责执行     | **按规范做一个 Task**      | ✅      |
-| [`mctech-sdd-change`](skills/change)               | 负责需求变更 | **需求变了怎么办？**       | ❌      |
-| [`mctech-sdd-verify`](skills/verify)               | 负责验收     | **做出来符合规范吗？**     | 默认 ❌ |
-| [`mctech-sdd-fix`](skills/fix)                     | 负责修复     | **验证结果修复实现问题**   | ✅      |
+| skills                                             | 职责 | 一句话记忆                   | 改代码 | 是否改 OpenSpec |
+| -------------------------------------------------- | ---- | ---------------------------- | ------ | --------------- |
+| [`mctech-sdd-explore`](skills/mctech-sdd-explore/) | 探索 | **现在是什么？**             | ❌      | ❌               |
+| [`mctech-sdd-analyze`](skills/mctech-sdd-analyze/) | 分析 | **问题是什么？有哪些方案？** | ❌      | ❌               |
+| [`mctech-sdd-decide`](skills/decide)               | 决策 | **最终选什么？**             | ❌      | ✅/决策文档      |
+| [`mctech-sdd-spec`](skills/spec)                   | 规范 | **系统应该是什么？**         | ❌      | ✅               |
+| [`mctech-sdd-plan`](skills/plan)                   | 规化 | **怎么拆 Task？**            | ❌      | ✅               |
+| [`mctech-sdd-implement`](skills/implement)         | 实现 | **把 Task 做出来**           | ✅      | ❌               |
+| [`mctech-sdd-verify`](skills/verify)               | 验收 | **做出来的对不对？**         | 默认 ❌ | ❌               |
+| [`mctech-sdd-fix`](skills/fix)                     | 修复 | **实现有问题怎么修？**       | ✅      | ❌               |
+| [`mctech-sdd-change`](skills/change)               | 变更 | **需求变了怎么办？**         | ❌      | ✅               |
+
+## samples
+
+[samples](/samples/README.md) 这里是一个在项目开发中实际使用这套方式的一个案例，但是是没有总结归纳为skills前直接用 Prompt 方式生成的。但是使用的设计开发流程和规范是一样的
 
 ## 与 OpenSpec 命令之间的关系
 
@@ -117,12 +121,12 @@ Explore → Analyze → Decide → Spec → Plan → Implement → Verify
         │  /mctech-sdd-verify  │
         └──────────┬───────────┘
                    │
-                   ├─────────────────────────┐
+                   │◀───────────────────────┐
                    │                         │
        ┌───────────┴──────────┐              │
        │                      │              │
        ▼                      ▼              │
-    实现有问题             Spec/需求变化        │
+    实现有问题            Spec/需求变化        │
        │                      │              │
        ▼                      ▼              │
    /mctech-sdd-fix     /mctech-sdd-change    │
@@ -149,9 +153,59 @@ Explore → Analyze → Decide → Spec → Plan → Implement → Verify
 
 ---
 
-## 小需求不要走完整流程
+9 个命令最终关系
 
-这套流程不能变成“任何改一行代码都要 Explore”。
+实际使用时建议形成下面这个主流程：
+
+```plain
+/mctech-sdd-explore
+        ↓
+/mctech-sdd-analyze
+        ↓
+/mctech-sdd-decide
+        ↓
+/mctech-sdd-spec
+        ↓
+/mctech-sdd-plan
+        ↓
+/mctech-sdd-implement
+        ↓
+/mctech-sdd-verify
+        │
+        ├── PASS
+        │     ↓
+        │    完成
+        │
+        ├── IMPLEMENTATION_BUG
+        │     ↓
+        │ /mctech-sdd-fix
+        │     ↓
+        │ /mctech-sdd-verify
+        │
+        ├── SPEC / REQUIREMENT CHANGE
+        │     ↓
+        │ /mctech-sdd-change
+        │     ↓
+        │ /mctech-sdd-plan
+        │     ↓
+        │ /mctech-sdd-implement
+        │
+        └── ARCHITECTURE CHANGE
+              ↓
+           /mctech-sdd-decide
+              ↓
+           /mctech-sdd-spec
+              ↓
+           /mctech-sdd-plan
+```
+
+一个很重要的使用原则，这 9 个命令不是 9 个必须机械执行的步骤。
+
+例如一个很小的功能：explore → spec → plan → implement → verify 就够了。
+
+跨多个微服务、涉及旧模型迁移、缓存、前端、API、多个业务模块的大型重构或新功能开发，才建议完整使用
+
+这样不会让 AI 为了一个简单需求产生大量无意义文档，同时大型重构又能保持严格的 “探索 → 分析 → 决策 → 规范 → 计划 → 实现 → 验证 → 修复/变更” 闭环。
 
 建议生产环境用一个非常简单的判断：
 
@@ -257,7 +311,7 @@ Explore → Analyze → Decide → Spec → Plan → Implement → Verify
 
 ### 使用场景
 
-例如你确定：
+例如确定：
 
 ```plain
 Gateway 做 API 粗粒度验权，Service 做资源级验权，统一通过 Authorization SDK。

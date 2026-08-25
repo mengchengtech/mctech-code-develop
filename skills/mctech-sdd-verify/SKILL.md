@@ -1,117 +1,230 @@
 ---
 name: mctech-sdd-verify
-description: 根据最新 OpenSpec 验证实现完整性、规范符合性和发布风险
-stage: verification
-mode: read-only
-input:
-  - change
-  - proposal
-  - design
-  - specs
-  - tasks
-  - repository
-  - test_results
-output:
-  - verification_report
-  - compliance_report
-  - risks
-side_effects: none
-authority: verification
-next:
-  - mctech-sdd-implement
-  - archive
+description: Verify an implemented OpenSpec change against the latest specification, design, task requirements, tests, API contracts, data constraints, and security behavior. Classify failures and determine the correct next action.
+argument-hint: "[task-id|change-name|final]"
+disable-model-invocation: true
 ---
 
-你现在处于验证阶段。
+# MCTech SDD Verify
 
-当前 OpenSpec Change：
-{{CHANGE}}
+你现在处于 SDD 的规范验证阶段。
 
-验证目标：
-{{SCOPE}}
+验证范围：
 
-请以最新 OpenSpec Spec 为主要验收依据，对当前代码进行验证。
+$ARGUMENTS
+
+## 目标
+
+判断实现是否符合最新 Spec，而不仅仅是判断测试是否通过。
+
+## 权威顺序
+
+验证时优先依据：
+
+1. 最新批准的 Spec
+2. Architecture Decision
+3. Design
+4. Task
+5. Tests
+6. 当前实现
+
+测试不是需求本身。
+
+如果测试与 Spec 冲突：
+
+标记为 TEST_DEFECT。
+
+不要为了测试通过而修改业务代码。
+
+## 验证内容
+
+### 1. Spec Coverage
+
+确认每一个 Spec 是否已经实现。
+
+### 2. Behavioral Verification
 
 检查：
 
-1. Spec 是否全部实现
-2. Design 是否得到正确实现
-3. Tasks 是否完成
-4. 是否存在 Spec Drift
-5. 是否存在遗漏的业务场景
-6. 是否存在权限绕过
-7. 是否存在兼容性问题
-8. 是否存在数据库/API/缓存问题
-9. 测试是否覆盖关键场景
-10. 是否存在旧实现残留
-11. 是否存在未记录的新实现
+- 正常流程
+- 异常流程
+- 边界条件
+- 权限拒绝
+- 权限绕过
+- 状态变化
+- 并发
+- 重试
 
-请区分：
+### 3. API Contract
 
-PASS
-FAIL
-RISK
-NOT VERIFIED
+检查：
 
-如果发现问题：
+- Request
+- Response
+- Status Code
+- Schema
+- Validation
+- Backward Compatibility
 
-1. 给出具体文件、类、方法。
-2. 说明违反哪个 Spec。
-3. 判断该问题是否属于当前 Task 的职责范围。
-4. 说明违反了哪个 Spec
-5. 说明影响
-6. 给出修复建议
+### 4. Data
 
-默认不要直接修改代码。
+检查：
 
-最后输出：
+- 表
+- 字段
+- 索引
+- 唯一约束
+- 数据一致性
+- Migration
 
-1. Spec Compliance
-2. Implementation Completeness
-3. Test Coverage
-4. Compatibility
-5. Security / Risk
-6. Remaining Issues
-7. Release Recommendation
-8. Final Report
+### 5. Cache
 
-Final Report格式如下：
+检查：
 
-PASS: 42
-FAIL: 1
-RISK: 5
-NOT VERIFIED: 3
+- 写入
+- 读取
+- 失效
+- 更新
+- 删除
+- 权限变化后的缓存一致性
+
+### 6. Security
+
+对于认证、授权、权限相关 Change，重点检查：
+
+- 未认证访问
+- 无权限访问
+- 权限继承
+- 权限组合
+- 租户切换
+- 公司切换
+- 身份变化
+- 权限缓存
+- 旧权限模型残留
+- 绕过路径
+
+### 7. Tests
+
+执行相关测试。
+
+必要时检查测试是否真正覆盖 Spec。
+
+## 问题分类
+
+每个问题必须归类为：
+
+- IMPLEMENTATION_BUG
+- TEST_DEFECT
+- CONTRACT_DRIFT
+- CONFIGURATION_DEFECT
+- SPEC_DEFECT
+- DESIGN_CHANGE
+- ARCHITECTURE_PROBLEM
+- NEW_REQUIREMENT
+- ENVIRONMENT_PROBLEM
+- OUT_OF_SCOPE
+- UNKNOWN
+
+## 状态
+
+使用：
+
+- PASS
+- FAIL
+- RISK
+- NOT VERIFIED
+
+## Required Action
+
+### IMPLEMENTATION_BUG
+
+/mctech-sdd-fix
+
+### TEST_DEFECT
+
+/mctech-sdd-fix
+
+### CONTRACT_DRIFT
+
+/mctech-sdd-fix
+
+### SPEC_DEFECT
+
+/mctech-sdd-change
+
+### DESIGN_CHANGE
+
+/mctech-sdd-decide
+
+### ARCHITECTURE_PROBLEM
+
+/mctech-sdd-decide
+
+### NEW_REQUIREMENT
+
+/mctech-sdd-change
+
+### ENVIRONMENT_PROBLEM
+
+先修复环境，然后重新 Verify。
+
+### OUT_OF_SCOPE
+
+记录并 Deferred。
+
+## 重要原则
+
+不要：
+
+- 因为发现问题就修改代码
+- 因为测试失败就改变 Spec
+- 因为发现旧代码就扩大 Change
+- 把 OUT_OF_SCOPE 当成当前 Change 失败
+- 把 NOT VERIFIED 当成 FAIL
+
+## 输出格式
+
+# Verification Report
+
+## Summary
+
+PASS: X
+FAIL: X
+RISK: X
+NOT VERIFIED: X
+
+## PASS
+
+## FAIL
+
+每项包含：
+
+- ID
+- Severity
+- Classification
+- Spec
+- Task
+- Location
+- Problem
+- Impact
+- Recommended Action
+
+## RISK
+
+## NOT VERIFIED
+
+## DEFERRED
+
+## OUT OF SCOPE
 
 ## Required Actions
 
-### 需要修复
+最后给出：
 
-1. [IMPLEMENTATION_BUG]
-  org-management 换公司未校验 grants
-  Action:
-  /ai-fix Task3
-2. [TEST_DEFECT]
-    .........
-  Action:
-  /ai-fix
+NEXT_ACTION:
 
-### 需要决策
-
-1. [DB_CONSTRAINT | SPEC_DEFECT | DESIGN_CHANGE | ARCHITECTURE_PROBLEM | NEW_REQUIREMENT]
-  Sequelize 未声明复合唯一索引
-  Question:
-  生产数据库约束的 Source of Truth 是 migration/DDL
-  还是 Sequelize Model？
-
-### 延期处理
-
-1. [CLEANUP | OUT_OF_SCOPE]
-  UDP Model 仍注册
-  Reason:
-  属于 §7 Cleanup
-2. [OUT_OF_SCOPE]
-  service-operations 仍读取 UDP
-
-### 未经验证的
-1. [ENVIRONMENT]
-  Playwright 浏览器缺失
+- /mctech-sdd-fix
+- /mctech-sdd-change
+- /mctech-sdd-decide
+- ENVIRONMENT_FIX
+- PASS

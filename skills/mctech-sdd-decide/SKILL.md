@@ -1,61 +1,133 @@
 ---
 name: mctech-sdd-decide
-description: 将架构师确认的方案和约束正式记录为 Architecture Decision
-stage: decision
-mode: read-only
-input:
-  - user_request
-  - analysis
-  - exploration
-  - architect_decisions
-output:
-  - decisions
-  - constraints
-side_effects: none
-authority: architecture_decision
-next:
-  - mctech-sdd-spec
+description: Record and formalize architecture decisions for an SDD change after the solution has been reviewed and approved. Use to establish constraints that later specification and implementation must follow.
+argument-hint: "[decision-or-topic]"
+disable-model-invocation: true
 ---
 
-你现在处于架构决策确认阶段。
+# MCTech SDD Decide
 
-当前任务：
-{{TASK}}
+你现在处于 SDD 的架构决策阶段。
 
-以下内容是架构师已经确认的决策。
-请将以下内容视为已经确定的架构约束，不要自行修改：
+## 目标
 
-{{DECISIONS}}
+将已经确认的架构方案和关键技术取舍正式记录下来，作为后续 Spec 和实现的约束。
 
-请将这些决策整理成正式的架构决策记录。
+决策主题：
 
-要求：
+$ARGUMENTS
 
-1. 明确最终采用的方案。
-2. 明确不采用的方案。
-3. 记录关键设计约束。
-4. 记录兼容性要求。
-5. 记录迁移要求。
-6. 记录回滚要求。
-7. 记录重要的非功能性要求。
-8. 检查决策之间是否存在冲突。
+## 重要原则
 
-重要：
+你不是架构决策者。
 
-- 不要自行改变架构师的决策。
-- 如果发现冲突，停止并指出冲突。
-- 不修改代码。
-- 不执行任务。
-- 不擅自增加架构约束。
+只有以下内容可以被记录为最终决策：
 
-请基于这些已经确定的架构决策，重新整理最终技术方案。
-如果发现这些决策之间存在矛盾，不要自行修改，请列出冲突供我确认。
+- 用户明确批准的方案
+- 已存在且明确有效的架构决策
+- 明确的项目级约束
 
-输出：
+如果用户没有明确选择方案，而不同方案会产生重大架构影响：
 
-1. Decision
-2. Architecture Constraints
-3. Compatibility Constraints
-4. Migration Constraints
-5. Rollback Constraints
-6. Conflicts / Questions
+不要自行决定。
+
+应停止并提出 Decision Required。
+
+## 决策内容
+
+### Context
+
+为什么需要这个决策。
+
+### Decision
+
+最终采用什么方案。
+
+### Alternatives
+
+考虑过哪些方案。
+
+### Rejected Alternatives
+
+为什么不采用其他方案。
+
+### Architecture Constraints
+
+后续实现必须遵守的架构约束。
+
+### API Constraints
+
+API 相关约束。
+
+### Data Constraints
+
+数据库、数据模型和数据一致性约束。
+
+### Compatibility Constraints
+
+兼容性要求。
+
+### Migration
+
+迁移要求。
+
+### Rollback
+
+回滚要求。
+
+### Non-functional
+
+Requirements
+
+包括：
+
+- 性能
+- 安全
+- 可用性
+- 可观测性
+
+## 冲突检查
+
+检查：
+
+- 当前 Decision 与已有 Design 是否冲突
+- 与已有 Spec 是否冲突
+- 与已有架构决策是否冲突
+
+如果存在冲突：
+
+不要自行覆盖旧决策。
+
+明确报告冲突。
+
+## 输出格式
+
+# Architecture Decision
+
+## Context
+
+## Decision
+
+## Alternatives
+
+## Rejected Alternatives
+
+## Architecture Constraints
+
+## API Constraints
+
+## Data Constraints
+
+## Compatibility Constraints
+
+## Migration
+
+## Rollback
+
+## Non-functional Requirements
+
+## Conflicts
+
+如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构写入。
+
+不要修改业务代码。

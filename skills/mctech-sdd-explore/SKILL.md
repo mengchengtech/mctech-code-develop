@@ -1,60 +1,173 @@
 ---
 name: mctech-sdd-explore
-description: 探索当前系统实现，建立可靠的 Current State，不修改代码
-stage: discovery
-mode: read-only
-input:
-  - user_request
-  - repository
-  - existing_docs
-output:
-  - exploration
-side_effects: none
-authority: current_state
-next:
-  - mctech-sdd-analyze
-  - mctech-sdd-spec
+description: Explore the existing system before making design or implementation decisions. Use to understand current architecture, modules, call flows, data flows, APIs, dependencies, tests, legacy behavior, and technical constraints for an SDD change.
+argument-hint: "[feature-or-module]"
+disable-model-invocation: true
 ---
 
-你现在处于系统探索阶段。
-本阶段严禁修改任何代码、配置、数据库结构和测试文件，也不要提出具体重构方案。
+# MCTech SDD Explore
 
-目标：
-理解当前代码库中与当前任务相关的真实实现。
+你现在处于 SDD 的系统探索阶段。
 
-当前任务：
-{{TASK}}
+## 目标
 
-要求：
+建立当前系统的可靠事实，而不是设计解决方案。
 
-1. 阅读相关代码、配置、数据库模型、测试和已有文档。
-2. 找出功能涉及的模块、入口、核心类、方法和依赖关系。
-3. 分析当前业务流程和数据流。
-4. 找出所有相关 API、Service、Repository、Middleware、Interceptor 等入口。
-5. 对跨模块功能，检查模块之间的调用关系。
-6. 搜索重复实现、特殊实现和潜在遗漏。
-7. 找出当前实现中的问题和技术债。
-8. 对无法确认的内容明确标记为“待确认”。
+探索目标：
 
-特别要求：
+$ARGUMENTS
 
-- 只描述代码事实，不要自行设计新方案。
-- 区分“已确认事实”和“推测”。
-- 不修改任何代码。
-- 不执行重构。
-- 不因为发现问题就立即提出解决方案。
+## 核心原则
 
-输出：
+1. 只基于实际代码、配置、文档、测试和数据库定义判断。
+2. 不把推测当成事实。
+3. 不修改业务代码。
+4. 不修改 OpenSpec。
+5. 不提前确定最终架构方案。
+6. 对无法确认的问题明确标记。
 
-1. 当前架构
-2. 数据模型
-3. 核心流程
-4. 模块依赖
-5. 关键代码入口
-6. 相关 API
-7. 相关配置/缓存/数据库
-8. 测试情况
-9. 当前问题
-10. 待确认问题
+## 探索范围
 
-尽可能给出具体的文件、类、方法和代码位置。
+根据任务需要检查：
+
+- 项目目录结构
+- 模块职责
+- API / Controller
+- Service
+- Repository / DAO
+- Middleware / Interceptor
+- 权限和认证逻辑
+- 数据库模型和 DDL
+- 缓存
+- 消息队列
+- 外部服务
+- 前端调用
+- 配置
+- 测试
+- 定时任务
+- 异步流程
+- 错误处理
+- 日志和监控
+
+对于跨模块功能，必须追踪：
+
+入口
+→ Controller / API
+→ Service
+→ 核心业务逻辑
+→ 数据访问
+→ 缓存 / MQ / 外部服务
+
+必要时同时分析反向依赖：
+
+- 谁调用当前模块？
+- 当前模块调用谁？
+
+## 重点检查
+
+### 1. Current State
+
+说明当前系统实际上如何工作。
+
+### 2. Module Map
+
+列出相关模块及职责。
+
+### 3. Call Flow
+
+描述关键调用链。
+
+### 4. Data Flow
+
+描述关键数据流。
+
+### 5. API
+
+列出相关接口、请求、响应和兼容行为。
+
+### 6. Data Model
+
+列出相关：
+
+- 表
+- 字段
+- 索引
+- ORM Model
+- 数据关系
+
+### 7. Dependencies
+
+包括：
+
+- Redis
+- MQ
+- 外部 API
+- 服务间调用
+- 配置中心
+
+仅列实际存在的依赖。
+
+### 8. Existing Tests
+
+说明：
+
+- 已有测试
+- 覆盖场景
+- 缺失场景
+
+### 9. Legacy / Compatibility
+
+重点寻找：
+
+- 旧实现
+- 兼容代码
+- Deprecated API
+- Feature Flag
+- 双写 / 双读
+- 迁移逻辑
+
+### 10. Problems
+
+记录已经确认的问题。
+
+不要把潜在问题描述成确定问题。
+
+## 输出格式
+
+# Exploration Report
+
+## 1. Current State
+
+## 2. Architecture / Module Map
+
+## 3. Call Flow
+
+## 4. Data Flow
+
+## 5. API
+
+## 6. Data Model
+
+## 7. Dependencies
+
+## 8. Existing Tests
+
+## 9. Legacy / Compatibility
+
+## 10. Confirmed Problems
+
+## 11. Confirmed Facts
+
+## 12. Open Questions
+
+## 13. Potential Risks
+
+每个重要结论尽可能提供：
+
+- 文件路径
+- 类 / 函数
+- 配置项
+- 数据表
+- 测试名称
+
+不要修改任何文件。

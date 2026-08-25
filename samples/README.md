@@ -683,4 +683,4 @@ Task 6 ⏳
 /mctech-sdd-verify
 /mctech-sdd-fix
 
-详细的命令介绍参见 <commands/README.md>
+详细的命令介绍参见 <../README.md>

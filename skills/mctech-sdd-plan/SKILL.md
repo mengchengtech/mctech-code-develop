@@ -1,66 +1,134 @@
 ---
 name: mctech-sdd-plan
-description: 根据 OpenSpec 将目标拆分为有依赖关系、可执行、可验证的 Tasks
-stage: planning
-mode: read-only
-input:
-  - proposal
-  - design
-  - specs
-  - existing_tasks
-  - repository
-output:
-  - tasks
-  - task_dependencies
-  - execution_plan
-side_effects: openspec_only
-authority: execution_plan
-next:
-  - mctech-sdd-implement
+description: Convert an approved OpenSpec change into an executable implementation plan with dependency-aware tasks, clear scope, acceptance criteria, and test requirements.
+argument-hint: "[change-name]"
+disable-model-invocation: true
 ---
 
-你现在处于实施计划阶段。
+# MCTech SDD Plan
 
-请根据当前 OpenSpec 的：
+你现在处于 SDD 的实施规划阶段。
 
-- proposal
-- design
-- specs
+## 目标
 
-制定可执行的任务计划。
+将已经确定的 Spec 拆分为安全、可执行、可验证的 Tasks。
 
-要求：
+Change：
 
-1. 按依赖关系拆分任务。
-2. 每个任务有明确边界。
-3. 每个任务尽量可以独立验证。
-4. 不要简单按照目录拆任务。
-5. 先完成基础能力，再进行业务迁移。
-6. 数据库/API/缓存等基础变化应优先。
-7. 标明任务依赖关系。
-8. 标明可能冲突的任务。
-9. 为关键任务安排测试。
-10. 最后安排清理旧实现。
+$ARGUMENTS
 
-任务建议分类：
+## 前置条件
+
+开始前必须读取：
+
+1. Proposal
+2. Design
+3. Spec
+4. Architecture Decisions
+5. 当前代码结构
+
+如果发现 Spec 未确定：
+
+不要自行补 Spec。
+
+## Task 拆分原则
+
+优先考虑依赖关系，而不是简单按照目录或文件拆分。
+
+大型功能可以按照：
 
 Foundation
-Infrastructure
-Migration
-Business
-Verification
-Cleanup
+→ Infrastructure
+→ Data Model
+→ Core Logic
+→ API
+→ Business Migration
+→ Compatibility
+→ Cleanup
+→ Verification
 
-每个 Task 必须包含：
+进行拆分。
 
-- 目标
-- 前置依赖
-- 修改范围
-- 需要遵守的 Spec
-- 验收条件
-- 测试要求
+## 每个 Task 必须包含
+
+### Objective
+
+任务目标。
+
+### Scope
+
+允许修改的范围。
+
+### Dependencies
+
+前置 Task。
+
+### Related Spec
+
+对应哪些 Spec。
+
+### Implementation Notes
+
+必要的实现约束。
+
+### Acceptance Criteria
+
+完成条件。
+
+### Tests
+
+需要增加或修改的测试。
+
+## Task 设计原则
+
+一个 Task 应该：
+
+- 有明确目标
+- 有明确边界
+- 可以独立验证
+- 不依赖未定义的隐式行为
+
+避免：
+
+- 一个 Task 覆盖整个 Change
+- 一个 Task 只修改一个无意义的小文件
+- 两个 Task 同时修改同一个核心逻辑而没有依赖关系
+- Task 包含 Spec 没有要求的功能
+
+## Spec Coverage
+
+最终必须执行：
+
+Spec → Task
+
+映射检查。
+
+每个 Spec 必须至少有一个对应 Task。
+
+如果没有：
+
+报告 Spec Coverage Gap。
+
+## 输出
+
+更新 OpenSpec Change 中的 Tasks。
+
+同时输出：
+
+# Implementation Plan
+
+## Task List
+
+## Dependencies
+
+## Spec Coverage
+
+## Parallelizable Tasks
+
+## Sequential Tasks
+
+## Risks
+
+## Verification Plan
 
 不要修改业务代码。
-
-最后检查：
-所有 Spec 是否都能通过 Tasks 得到实现。
