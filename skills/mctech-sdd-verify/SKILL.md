@@ -55,10 +55,12 @@ NOT VERIFIED
 
 如果发现问题：
 
-- 给出具体文件、类、方法
-- 说明违反了哪个 Spec
-- 说明影响
-- 给出修复建议
+1. 给出具体文件、类、方法。
+2. 说明违反哪个 Spec。
+3. 判断该问题是否属于当前 Task 的职责范围。
+4. 说明违反了哪个 Spec
+5. 说明影响
+6. 给出修复建议
 
 默认不要直接修改代码。
 
@@ -71,3 +73,45 @@ NOT VERIFIED
 5. Security / Risk
 6. Remaining Issues
 7. Release Recommendation
+8. Final Report
+
+Final Report格式如下：
+
+PASS: 42
+FAIL: 1
+RISK: 5
+NOT VERIFIED: 3
+
+## Required Actions
+
+### 需要修复
+
+1. [IMPLEMENTATION_BUG]
+  org-management 换公司未校验 grants
+  Action:
+  /ai-fix Task3
+2. [TEST_DEFECT]
+    .........
+  Action:
+  /ai-fix
+
+### 需要决策
+
+1. [DB_CONSTRAINT | SPEC_DEFECT | DESIGN_CHANGE | ARCHITECTURE_PROBLEM | NEW_REQUIREMENT]
+  Sequelize 未声明复合唯一索引
+  Question:
+  生产数据库约束的 Source of Truth 是 migration/DDL
+  还是 Sequelize Model？
+
+### 延期处理
+
+1. [CLEANUP | OUT_OF_SCOPE]
+  UDP Model 仍注册
+  Reason:
+  属于 §7 Cleanup
+2. [OUT_OF_SCOPE]
+  service-operations 仍读取 UDP
+
+### 未经验证的
+1. [ENVIRONMENT]
+  Playwright 浏览器缺失

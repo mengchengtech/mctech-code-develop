@@ -1,6 +1,7 @@
 // 忽略以下文件和文件夹
 {
   "config": {
+    "MD004": false,
     "MD013": false,
     "MD022": false,
     "MD024": false,

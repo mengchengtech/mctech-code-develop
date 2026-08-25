@@ -1,6 +1,6 @@
 ---
 name: mctech-sdd-analyze
-description: 基于当前系统事实分析问题、比较方案并提出推荐方案
+description: 开启探索模式，分析思考发挥想象积极探索方案，探察问题，澄清需求。还可以基于当前系统事实分析问题、比较方案并提出推荐方案
 stage: analysis
 mode: read-only
 input:

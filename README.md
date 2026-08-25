@@ -1,23 +1,69 @@
-# 命令说明
+# AI 规范驱动开发流程（AI-SDD Workflow）
 
-项目开发环境中推荐 **9 个 `/mctech-sdd-*` 命令**：
+AI 规范驱动开发流程是一套基于 OpenSpec、SDD（Specification-Driven Development）和 AI Agent 的工程化开发方法。
 
-## 最终推荐的命令速查表
+它将传统的“需求 → 设计 → 开发 → 测试”进一步拆分为 AI Agent 可执行、可验证、可追踪的阶段：
 
-以后实际上只需要记住下面这些：
+```plain
+探索 → 分析 → 决策 → 规范 → 规划
+                  ↓
+              实现 → 验证
+                  ↓
+            修复 / 需求变更
+```
 
-| 命令                    | 职责         | 一句话记忆                 | 改代码 |
-| ----------------------- | ------------ | -------------------------- | ------ |
-| `/mctech-sdd-explore`   | 负责事实     | **现在是什么？**           | ❌      |
-| `/mctech-sdd-analyze`   | 负责方案     | **问题是什么？怎么解决？** | ❌      |
-| `/mctech-sdd-decide`    | 负责决策     | **最终选哪个？**           | ❌      |
-| `/mctech-sdd-spec`      | 负责契约     | **最终必须是什么？**       | ❌      |
-| `/mctech-sdd-plan`      | 负责拆解     | **怎么拆着做？**           | ❌      |
-| `/mctech-sdd-implement` | 负责执行     | **按规范做一个 Task**      | ✅      |
-| `/mctech-sdd-change`    | 负责需求变更 | **需求变了怎么办？**       | ❌      |
-| `/mctech-sdd-verify`    | 负责验收     | **做出来符合规范吗？**     | 默认 ❌ |
-| `/mctech-sdd-fix`       | 负责修复     | **验证结果修复实现问题**   | ✅      |
+通过一组 `/mctech-sdd-*` 命令明确每个阶段的职责、输入、输出和修改权限，避免 Agent 在大型重构过程中随意修改需求、架构或代码范围。
 
+其核心目标是：
+
+- 让 AI 按规范工作，而不是让 AI 自由发挥。
+- 适合大型功能开发、跨模块重构、遗留系统改造以及多人/多 Agent 协作开发。
+
+它是把几类已经被广泛实践的方法组合起来：
+
+* SDD / Specification-Driven Development：规范驱动开发
+* OpenSpec / Spec 工作流：Proposal → Design → Spec → Tasks → Apply/Verify
+* Agentic Coding：AI Agent 按任务执行、验证、修复
+* 传统软件工程：需求 → 设计 → 实现 → 测试 → 缺陷修复 → 变更管理
+* Architecture Decision / ADR：把架构决策显式记录下来
+
+可以简单理解为：
+
+> OpenSpec 标准命令负责“规范驱动开发流程”，/mctech-sdd-* 负责把这个流程进一步拆成适合 AI Agent 执行的细粒度工作流。
+
+## 命令速查表
+
+| skills                                             | 职责         | 一句话记忆                 | 改代码 |
+| -------------------------------------------------- | ------------ | -------------------------- | ------ |
+| [`mctech-sdd-explore`](skills/mctech-sdd-explore/) | 负责事实     | **现在是什么？**           | ❌      |
+| [`mctech-sdd-analyze`](skills/mctech-sdd-analyze/) | 负责方案     | **问题是什么？怎么解决？** | ❌      |
+| [`mctech-sdd-decide`](skills/decide)               | 负责决策     | **最终选哪个？**           | ❌      |
+| [`mctech-sdd-spec`](skills/spec)                   | 负责契约     | **最终必须是什么？**       | ❌      |
+| [`mctech-sdd-plan`](skills/plan)                   | 负责拆解     | **怎么拆着做？**           | ❌      |
+| [`mctech-sdd-implement`](skills/implement)         | 负责执行     | **按规范做一个 Task**      | ✅      |
+| [`mctech-sdd-change`](skills/change)               | 负责需求变更 | **需求变了怎么办？**       | ❌      |
+| [`mctech-sdd-verify`](skills/verify)               | 负责验收     | **做出来符合规范吗？**     | 默认 ❌ |
+| [`mctech-sdd-fix`](skills/fix)                     | 负责修复     | **验证结果修复实现问题**   | ✅      |
+
+## 与 OpenSpec 命令之间的关系
+
+OpenSpec 标准命令负责“规范驱动开发流程”，/mctech-sdd-* 负责把这个流程进一步拆成适合 AI Agent 执行的细粒度工作流。
+
+| OpenSpec 标准命令 | `/mctech-sdd-*`                                                                           | 关系                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `propose`         | `/mctech-sdd-explore` + `/mctech-sdd-analyze` + `/mctech-sdd-decide` + `/mctech-sdd-spec` | `/mctech-sdd-*` 把 propose 前后的分析、决策、规范化拆开 |
+| `explore`         | `/mctech-sdd-explore`                                                                     | 基本对应                                                |
+| `apply`           | `/mctech-sdd-implement`                                                                   | 核心对应                                                |
+| `verify`          | `/mctech-sdd-verify`                                                                      | 基本对应                                                |
+| `archive`         | 暂无专门命令                                                                              | OpenSpec 生命周期管理                                   |
+| —                 | `/mctech-sdd-plan`                                                                        | 对应 OpenSpec tasks 的细化                              |
+| —                 | `/mctech-sdd-fix`                                                                         | Verify 后的缺陷修复闭环                                 |
+| —                 | `/mctech-sdd-change`                                                                      | 实施过程中的需求/Spec 变更管理                          |
+
+> OpenSpec 关注的是：Change 的生命周期。
+> /mctech-sdd-* 关注的是：AI Agent 每一步应该思考什么、能修改什么、什么时候必须停下来。
+
+它们不是竞争关系，而是上下层关系，就好像基础设施和上层应用的关系。OpenSpec 可作为底层规范和事实来源，/mctech-sdd-* 作为团队的 Agent 操作层。
 无论数据库重构、微服务拆分、前端大改、API 重构，都可以复用同一套 Agent 工作流。
 
 它们对应：
@@ -29,7 +75,112 @@ Explore → Analyze → Decide → Spec → Plan → Implement → Verify
                         └── Change ──┘
 ```
 
-下面这些 Prompt 可以直接作为你的 Agent 命令模板使用。
+---
+
+## 推荐的生产工作流
+
+现在把 9 个命令串起来：
+
+```plain
+             新功能 / 大重构
+                   │
+                   ▼
+           /mctech-sdd-explore
+                   │
+                   ▼
+           /mctech-sdd-analyze
+                   │
+                   ▼
+           /mctech-sdd-decide
+                   │
+                   ▼
+           /mctech-sdd-spec
+                   │
+                   ▼
+           /mctech-sdd-plan
+                   │
+                   ▼
+    ┌──────────────────────────────┐
+    │  /mctech-sdd-implement Task1 │
+    │  /mctech-sdd-verify Task1    │
+    └──────────────┬───────────────┘
+                   │
+                   ▼
+    ┌──────────────────────────────┐
+    │  /mctech-sdd-implement Task2 │
+    │  /mctech-sdd-verify Task2    │
+    └──────────────┬───────────────┘
+                   │
+                   ▼
+                  ...
+        ┌──────────────────────┐
+        │  /mctech-sdd-verify  │
+        └──────────┬───────────┘
+                   │
+                   ├─────────────────────────┐
+                   │                         │
+       ┌───────────┴──────────┐              │
+       │                      │              │
+       ▼                      ▼              │
+    实现有问题             Spec/需求变化        │
+       │                      │              │
+       ▼                      ▼              │
+   /mctech-sdd-fix     /mctech-sdd-change    │
+       │                      │              │
+       │                      ▼              │
+       │               /mctech-sdd-plan      │
+       │                      │              │
+       │                      ▼              │
+       │              /mctech-sdd-implement  │
+       │                      │              │
+       └───────────┬──────────┘              │
+                   │                         │
+                   ▼                         │
+                   │                         │
+                   ▼                         │
+           /mctech-sdd-verify ───────────────┘
+                   │
+                   ▼
+              Final Verify
+                   │
+                   ▼
+                Archive
+```
+
+---
+
+## 小需求不要走完整流程
+
+这套流程不能变成“任何改一行代码都要 Explore”。
+
+建议生产环境用一个非常简单的判断：
+
+| 变化                     | 使用命令                              |
+| ------------------------ | ------------------------------------- |
+| 不知道代码在哪里         | `/mctech-sdd-explore`                 |
+| 不知道怎么设计           | `/mctech-sdd-analyze`                 |
+| 有多个方案需要架构决策   | `/mctech-sdd-decide`                  |
+| 新功能/重大需求          | `/mctech-sdd-spec`                    |
+| Spec 已确定，需要拆任务  | `/mctech-sdd-plan`                    |
+| 已确定怎么做，开始编码   | `/mctech-sdd-implement`               |
+| 已实施部分，需求发生变化 | `/mctech-sdd-change`                  |
+| 检查是否符合 Spec        | `/mctech-sdd-verify`                  |
+| 简单 Bug 修复            | 直接 Coding，不必走完整 SDD           |
+| 简单 UI 文案/样式        | 直接 Coding                           |
+| 小范围业务逻辑修改       | 根据影响决定是否 `/mctech-sdd-change` |
+
+---
+
+## 最重要的几个“禁止事项”
+
+- Explore：不能改代码。
+- Analyze：不能把推荐方案当成最终方案。
+- Decide：不能替架构师做最终决策。
+- Spec：不能偷偷改变已确认的架构决策。
+- Plan：不能通过拆 Task 改变业务需求。
+- Implement：不能自行扩大任务范围。
+- Change：不能直接修改代码，必须先分析影响。
+- Verify：不能以“测试通过”代替“符合 Spec”。
 
 ---
 
@@ -434,130 +585,3 @@ DESIGN_CHANGE
 ARCHITECTURE_PROBLEM
 NEW_REQUIREMENT
 ```
-
----
-
-## 推荐的生产工作流
-
-现在把 9 个命令串起来：
-
-```plain
-          新功能 / 大重构
-               │
-               ▼
-           /mctech-sdd-explore
-               │
-               ▼
-           /mctech-sdd-analyze
-               │
-               ▼
-           /mctech-sdd-decide
-               │
-               ▼
-           /mctech-sdd-spec
-               │
-               ▼
-           /mctech-sdd-plan
-               │
-               ▼
-    ┌─────────────────────┐
-    │ /mctech-sdd-implement Task1 │
-    │ /mctech-sdd-verify Task1    │
-    └──────────┬──────────┘
-               │
-               ▼
-    ┌─────────────────────┐
-    │ /mctech-sdd-implement Task2 │
-    │ /mctech-sdd-verify Task2    │
-    └──────────┬──────────┘
-               │
-               ▼
-              ...
-        ┌──────────────┐
-        │  /mctech-sdd-verify  │
-        └──────┬───────┘
-               │
-               ├──────────────────────────┐
-               │                          │
-       ┌───────┴────────┐                 │
-       │                │                 │
-       ▼                ▼                 │
-  实现有问题          Spec/需求变化          │
-       │                │                 │
-       ▼                ▼                 │
-   /mctech-sdd-fix          /mctech-sdd-change            │
-       │                │                 │
-       │                ▼                 │
-       │            /mctech-sdd-plan              │
-       │                │                 │
-       │                ▼                 │
-       │            /mctech-sdd-implement         │
-       │                │                 │
-       └────────┬───────┘                 │
-                │                         │
-                ▼                         │
-                │                         │
-                ▼                         │
-           /mctech-sdd-verify ────────────────────┘
-                │
-                ▼
-            Final Verify
-                │
-                ▼
-             Archive
-```
-
----
-
-## 小需求不要走完整流程
-
-这套流程不能变成“任何改一行代码都要 Explore”。
-
-我建议生产环境用一个非常简单的判断：
-
-| 变化                     | 使用命令                              |
-| ------------------------ | ------------------------------------- |
-| 不知道代码在哪里         | `/mctech-sdd-explore`                 |
-| 不知道怎么设计           | `/mctech-sdd-analyze`                 |
-| 有多个方案需要架构决策   | `/mctech-sdd-decide`                  |
-| 新功能/重大需求          | `/mctech-sdd-spec`                    |
-| Spec 已确定，需要拆任务  | `/mctech-sdd-plan`                    |
-| 已确定怎么做，开始编码   | `/mctech-sdd-implement`               |
-| 已实施部分，需求发生变化 | `/mctech-sdd-change`                  |
-| 检查是否符合 Spec        | `/mctech-sdd-verify`                  |
-| 简单 Bug 修复            | 通常直接 Coding，不必走完整 SDD       |
-| 简单 UI 文案/样式        | 通常直接 Coding                       |
-| 小范围业务逻辑修改       | 根据影响决定是否 `/mctech-sdd-change` |
-
----
-
-## 最重要的几个“禁止事项”
-
-- Explore：不能改代码。
-- Analyze：不能把推荐方案当成最终方案。
-- Decide：不能替架构师做最终决策。
-- Spec：不能偷偷改变已确认的架构决策。
-- Plan：不能通过拆 Task 改变业务需求。
-- Implement：不能自行扩大任务范围。
-- Change：不能直接修改代码，必须先分析影响。
-- Verify：不能以“测试通过”代替“符合 Spec”。
-
-## 与 OpenSpec 命令之间的关系
-
-OpenSpec 标准命令负责“规范驱动开发流程”，/mctech-sdd-* 负责把这个流程进一步拆成适合 AI Agent 执行的细粒度工作流。
-
-| OpenSpec 标准命令 | `/mctech-sdd-*`                                                                           | 关系                                                    |
-| ----------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `propose`         | `/mctech-sdd-explore` + `/mctech-sdd-analyze` + `/mctech-sdd-decide` + `/mctech-sdd-spec` | `/mctech-sdd-*` 把 propose 前后的分析、决策、规范化拆开 |
-| `explore`         | `/mctech-sdd-explore`                                                                     | 基本对应                                                |
-| `apply`           | `/mctech-sdd-implement`                                                                   | 核心对应                                                |
-| `verify`          | `/mctech-sdd-verify`                                                                      | 基本对应                                                |
-| `archive`         | 暂无专门命令                                                                              | OpenSpec 生命周期管理                                   |
-| —                 | `/mctech-sdd-plan`                                                                        | 对应 OpenSpec tasks 的细化                              |
-| —                 | `/mctech-sdd-fix`                                                                         | Verify 后的缺陷修复闭环                                 |
-| —                 | `/mctech-sdd-change`                                                                      | 实施过程中的需求/Spec 变更管理                          |
-
-> OpenSpec 关注的是：Change 的生命周期。
-> /mctech-sdd-* 关注的是：AI Agent 每一步应该思考什么、能修改什么、什么时候必须停下来。
-
-它们不是竞争关系，而是上下层关系，就好像基础设施和上层应用的关系。OpenSpec 可作为底层规范和事实来源，/mctech-sdd-* 作为团队的 Agent 操作层。
