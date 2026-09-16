@@ -132,3 +132,10 @@ Spec → Task
 ## Verification Plan
 
 不要修改业务代码。
+
+## Recommended Next Step
+
+通常：
+
+/mctech-sdd-implement
+/mctech-sdd-change 

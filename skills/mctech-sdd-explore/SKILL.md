@@ -171,3 +171,9 @@ $ARGUMENTS
 - 测试名称
 
 不要修改任何文件。
+
+## Recommended Next Step
+
+通常：
+
+/mctech-sdd-analyze

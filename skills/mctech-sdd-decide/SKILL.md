@@ -131,3 +131,9 @@ Requirements
 如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构写入。
 
 不要修改业务代码。
+
+## Recommended Next Step
+
+通常：
+
+/mctech-sdd-spec

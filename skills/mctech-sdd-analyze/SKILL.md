@@ -133,3 +133,10 @@ $ARGUMENTS
 ## 13. Decision Required
 
 不要修改代码或 OpenSpec。
+
+## Recommended Next Step
+
+通常：
+
+/mctech-sdd-decide
+/mctech-sdd-spec

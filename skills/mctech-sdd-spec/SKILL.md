@@ -141,3 +141,9 @@ Then 系统必须拒绝请求
 ## Open Questions
 
 ## Spec Coverage
+
+## Recommended Next Step
+
+通常：
+
+/mctech-sdd-plan
