@@ -171,6 +171,7 @@ $ARGUMENTS
 - 测试名称
 
 不要修改任何文件。
+如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构写入。
 
 ## Recommended Next Step
 

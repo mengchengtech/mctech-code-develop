@@ -133,6 +133,7 @@ $ARGUMENTS
 ## 13. Decision Required
 
 不要修改代码或 OpenSpec。
+如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构写入。
 
 ## Recommended Next Step
 

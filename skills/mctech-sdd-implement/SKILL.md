@@ -150,6 +150,8 @@ $ARGUMENTS
 
 ## Remaining Issues
 
+如果项目使用 ADR 或 OpenSpec Design 文件，设置任务完成标记
+
 ## Recommended Next Step
 
 通常：
