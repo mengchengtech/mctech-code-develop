@@ -132,8 +132,10 @@ $ARGUMENTS
 
 ## 13. Decision Required
 
+分析结果包括三种方案和需要人工决策的内容需要详细展开说明，不要使用精简话语，避免省略太多有效信息导致无法决策
+
 不要修改代码或 OpenSpec。
-如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构写入。
+如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构把当前分析结果保存到 ADR 或 OpenSpec目录下。
 
 ## Recommended Next Step
 

@@ -128,7 +128,7 @@ Requirements
 
 ## Conflicts
 
-如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构写入。
+如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构把当前决策结果保存到 ADR 或 OpenSpec目录下。
 
 不要修改业务代码。
 
