@@ -169,7 +169,59 @@ Task X.2
 
 /mctech-sdd-decide
 
-## 严格禁止
+## 输出格式
+
+使用下面yaml代码片断内的格式输出，输出不含包表示yaml代码块的前后标记
+
+```yaml
+# Change Impact Report
+
+## 1. Change Request
+
+## 2. Classification
+
+## 3. Proposal Impact
+
+## 4. Design Impact
+
+## 5. Spec Impact
+
+## 6. Completed Task Impact
+
+## 7. Current Task Impact
+
+## 8. Pending Task Impact
+
+## 9. Code Impact
+
+## 10. Test Impact
+
+## 11. Data / Migration Impact
+
+## 12. API Impact
+
+## 13. Cache Impact
+
+## 14. Rollback Impact
+
+## 15. Updated OpenSpec
+
+## 16. New Tasks
+
+## 17. Modified Tasks
+
+## 18. Obsolete Tasks
+
+## 19. Decision Required
+```
+
+## 强制要求
+
+1. 避免输出结果中包含有岐异的描述
+2. 重要信息不要使用精简话语，避免省略太多有效信息导致理解错误
+3. 如果是新生成的 ADR 或 OpenSpec 变更，不要立即生成 OpenSpec 文件
+
+### 严格禁止
 
 不得：
 
@@ -184,49 +236,9 @@ Task X.2
 - 自行改变架构决策
 - 将推测写成 MUST
 
-## 输出
-
-# Change Impact Report
-
-## Change Request
-
-## Classification
-
-## Proposal Impact
-
-## Design Impact
-
-## Spec Impact
-
-## Completed Task Impact
-
-## Current Task Impact
-
-## Pending Task Impact
-
-## Code Impact
-
-## Test Impact
-
-## Data / Migration Impact
-
-## API Impact
-
-## Cache Impact
-
-## Rollback Impact
-
-## Updated OpenSpec
-
-## New Tasks
-
-## Modified Tasks
-
-## Obsolete Tasks
-
-## Decision Required
-
 ## Next Action
+
+### 通常情况
 
 可能的下一步：
 
@@ -234,3 +246,11 @@ Task X.2
 /mctech-sdd-plan
 /mctech-sdd-implement
 /mctech-sdd-verify
+
+### 特殊情况
+
+#### 1. 如果是新生成的 ADR 或 OpenSpec 变更
+
+可能的一下步：
+
+/mctech-sdd-spec
