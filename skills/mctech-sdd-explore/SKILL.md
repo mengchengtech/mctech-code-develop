@@ -134,6 +134,9 @@ $ARGUMENTS
 
 ## 输出格式
 
+使用下面yaml代码片断内的格式输出，输出不含包表示yaml代码块的前后标记
+
+```yaml
 # Exploration Report
 
 ## 1. Current State
@@ -161,6 +164,7 @@ $ARGUMENTS
 ## 12. Open Questions
 
 ## 13. Potential Risks
+```
 
 每个重要结论尽可能提供：
 
@@ -170,7 +174,14 @@ $ARGUMENTS
 - 数据表
 - 测试名称
 
-不要修改任何文件。
+## 强制要求
+
+1. 避免输出结果中包含有岐异的描述
+2. 重要信息不要使用精简话语，避免省略太多有效信息导致理解错误
+3. 不要修改任何文件。
+
+## 保存探索结果文件
+
 如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构把当前探索结果保存到 ADR 或 OpenSpec目录下。
 
 ## Recommended Next Step

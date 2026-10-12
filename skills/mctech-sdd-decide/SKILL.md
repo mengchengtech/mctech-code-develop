@@ -35,47 +35,47 @@ $ARGUMENTS
 
 ## 决策内容
 
-### Context
+### 1. Context
 
 为什么需要这个决策。
 
-### Decision
+### 2. Decision
 
 最终采用什么方案。
 
-### Alternatives
+### 3. Alternatives
 
 考虑过哪些方案。
 
-### Rejected Alternatives
+### 4. Rejected Alternatives
 
 为什么不采用其他方案。
 
-### Architecture Constraints
+### 5. Architecture Constraints
 
 后续实现必须遵守的架构约束。
 
-### API Constraints
+### 6. API Constraints
 
 API 相关约束。
 
-### Data Constraints
+### 7. Data Constraints
 
 数据库、数据模型和数据一致性约束。
 
-### Compatibility Constraints
+### 8. Compatibility Constraints
 
 兼容性要求。
 
-### Migration
+### 9. Migration
 
 迁移要求。
 
-### Rollback
+### 10. Rollback
 
 回滚要求。
 
-### Non-functional
+### 11. Non-functional
 
 Requirements
 
@@ -102,35 +102,45 @@ Requirements
 
 ## 输出格式
 
+使用下面yaml代码片断内的格式输出，输出不含包表示yaml代码块的前后标记
+
+```yaml
 # Architecture Decision
 
-## Context
+## 1. Context
 
-## Decision
+## 2. Decision
 
-## Alternatives
+## 3. Alternatives
 
-## Rejected Alternatives
+## 4. Rejected Alternatives
 
-## Architecture Constraints
+## 5. Architecture Constraints
 
-## API Constraints
+## 6. API Constraints
 
-## Data Constraints
+## 7. Data Constraints
 
-## Compatibility Constraints
+## 8. Compatibility Constraints
 
-## Migration
+## 9. Migration
 
-## Rollback
+## 10. Rollback
 
-## Non-functional Requirements
+## 11. Non-functional Requirements
 
-## Conflicts
+## 12. Conflicts
+```
+
+## 强制要求
+
+1. 避免输出结果中包含有岐异的描述
+2. 重要信息不要使用精简话语，避免省略太多有效信息导致理解错误
+3. 不要修改业务代码。
+
+## 保存决策结果到文件
 
 如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构把当前决策结果保存到 ADR 或 OpenSpec目录下。
-
-不要修改业务代码。
 
 ## Recommended Next Step
 

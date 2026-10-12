@@ -104,6 +104,9 @@ $ARGUMENTS
 
 ## 输出格式
 
+使用下面yaml代码片断内的格式输出，输出不含包表示yaml代码块的前后标记
+
+```yaml
 # Analysis Report
 
 ## 1. Problem Definition
@@ -131,10 +134,16 @@ $ARGUMENTS
 ## 12. Rollback Considerations
 
 ## 13. Decision Required
+```
 
-分析结果包括三种方案和需要人工决策的内容需要详细展开说明，不要使用精简话语，避免省略太多有效信息导致无法决策
+## 强制要求
 
-不要修改代码或 OpenSpec。
+1. 分析结果包括三种方案和需要人工决策的内容需要详细展开说明
+2. 不要使用精简话语，避免省略太多有效信息导致无法决策
+3. 不要修改代码或 OpenSpec。
+
+## 保存分析结果到文件
+
 如果项目使用 ADR 或 OpenSpec Design 文件，应按照项目现有结构把当前分析结果保存到 ADR 或 OpenSpec目录下。
 
 ## Recommended Next Step
