@@ -102,7 +102,7 @@ Requirements
 
 ## 输出格式
 
-使用下面yaml代码片断内的格式输出，输出不含包表示yaml代码块的前后标记
+使用下面yaml代码片断内的格式输出，输出时不含包表示yaml代码块的前后标记，禁止以代码片段方式输出
 
 ```yaml
 # Architecture Decision
