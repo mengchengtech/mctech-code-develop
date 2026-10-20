@@ -139,6 +139,8 @@ $ARGUMENTS
 ```yaml
 # Exploration Report
 
+## 0. Original Input
+
 ## 1. Current State
 
 ## 2. Architecture / Module Map
