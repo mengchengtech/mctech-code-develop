@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-decide
+name: sdd-decide
 description: Record and formalize architecture decisions for an SDD change after the solution has been reviewed and approved. Use to establish constraints that later specification and implementation must follow.
 argument-hint: "[decision-or-topic]"
 disable-model-invocation: true
@@ -146,4 +146,4 @@ Requirements
 
 通常：
 
-/mctech-sdd-spec
+/sdd-spec

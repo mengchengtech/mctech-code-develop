@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-change
+name: sdd-change
 description: Safely handle requirement, behavioral, specification, design, or architecture changes after an OpenSpec change has already been planned or partially implemented. Analyze impact before updating the approved specification and tasks.
 argument-hint: "[change-request]"
 disable-model-invocation: true
@@ -23,7 +23,7 @@ $ARGUMENTS
 
 如果只是代码没有按照 Spec 实现：
 
-/mctech-sdd-fix
+/sdd-fix
 
 只有以下情况进入本 Skill：
 
@@ -167,7 +167,7 @@ Task X.2
 
 先进入：
 
-/mctech-sdd-decide
+/sdd-decide
 
 ## 输出格式
 
@@ -243,10 +243,10 @@ Task X.2
 
 可能的下一步：
 
-/mctech-sdd-decide
-/mctech-sdd-plan
-/mctech-sdd-implement
-/mctech-sdd-verify
+/sdd-decide
+/sdd-plan
+/sdd-implement
+/sdd-verify
 
 ### 特殊情况
 
@@ -254,4 +254,4 @@ Task X.2
 
 可能的一下步：
 
-/mctech-sdd-spec
+/sdd-spec

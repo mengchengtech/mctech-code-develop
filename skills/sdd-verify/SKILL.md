@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-verify
+name: sdd-verify
 description: Verify an implemented OpenSpec change against the latest specification, design, task requirements, tests, API contracts, data constraints, and security behavior. Classify failures and determine the correct next action.
 argument-hint: "[task-id|change-name|final]"
 disable-model-invocation: true
@@ -138,31 +138,31 @@ $ARGUMENTS
 
 ### IMPLEMENTATION_BUG
 
-/mctech-sdd-fix
+/sdd-fix
 
 ### TEST_DEFECT
 
-/mctech-sdd-fix
+/sdd-fix
 
 ### CONTRACT_DRIFT
 
-/mctech-sdd-fix
+/sdd-fix
 
 ### SPEC_DEFECT
 
-/mctech-sdd-change
+/sdd-change
 
 ### DESIGN_CHANGE
 
-/mctech-sdd-decide
+/sdd-decide
 
 ### ARCHITECTURE_PROBLEM
 
-/mctech-sdd-decide
+/sdd-decide
 
 ### NEW_REQUIREMENT
 
-/mctech-sdd-change
+/sdd-change
 
 ### ENVIRONMENT_PROBLEM
 
@@ -223,8 +223,8 @@ NOT VERIFIED: X
 
 NEXT_ACTION:
 
-- /mctech-sdd-fix
-- /mctech-sdd-change
-- /mctech-sdd-decide
+- /sdd-fix
+- /sdd-change
+- /sdd-decide
 - ENVIRONMENT_FIX
 - PASS

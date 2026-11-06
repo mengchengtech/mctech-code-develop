@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-fix
+name: sdd-fix
 description: Fix implementation defects identified by MCTech SDD Verify without changing approved requirements, specifications, architecture, or task scope. Use after verification reports an implementation bug, test defect, or contract drift.
 argument-hint: "[verification-issue-or-task]"
 disable-model-invocation: true
@@ -105,11 +105,11 @@ Spec
 
 停止并建议：
 
-/mctech-sdd-change
+/sdd-change
 
 如果必须改变架构：
 
-/mctech-sdd-decide
+/sdd-decide
 
 如果需要修改另一个 Task：
 
@@ -143,4 +143,4 @@ Spec
 
 通常：
 
-/mctech-sdd-verify
+/sdd-verify

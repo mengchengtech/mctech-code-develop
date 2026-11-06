@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-implement
+name: sdd-implement
 description: Implement exactly one approved OpenSpec task by modifying production code, tests, and necessary configuration while staying within the task scope and latest specification.
 argument-hint: "[task-id-or-task-description]"
 disable-model-invocation: true
@@ -112,13 +112,13 @@ $ARGUMENTS
 
 停止并建议：
 
-/mctech-sdd-decide
+/sdd-decide
 
 ### 需求发生变化
 
 停止并建议：
 
-/mctech-sdd-change
+/sdd-change
 
 ### 只是当前实现错误
 
@@ -156,4 +156,4 @@ $ARGUMENTS
 
 通常：
 
-/mctech-sdd-verify
+/sdd-verify

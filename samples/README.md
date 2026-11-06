@@ -3,7 +3,7 @@
 这是一个真实的案例，在自主运维平台开发了一个月后，基本功能和简单的权限已经做完了的情况下，对整个系统的权限功能包括权限重新定义，权限模型，授权方式和验权方式都做了一次推倒性的重构。以下是首次使用ai分析给出的流程的粗粒度基础上结合实际项目开发和反复调整，得出的以下完整的实践过程。
 每一步与 AI 实际交互的联天内容都保存到 `step*` 开头的文件里，可以对照着查阅
 
-从 step9开始，切换到 `mctech-sdd-*` 命令模式，不再每次都贴大段的 Prompt 给 AI 模型了
+从 step9开始，切换到 `sdd-*` 命令模式，不再每次都贴大段的 Prompt 给 AI 模型了
 
 ## 整体流程
 
@@ -673,14 +673,14 @@ Task 6 ⏳
 
 根据以上流程可以把这些 Prompt 转化为固定的几个命令：
 
-/mctech-sdd-explore
-/mctech-sdd-analyze
-/mctech-sdd-decide
-/mctech-sdd-spec
-/mctech-sdd-plan
-/mctech-sdd-implement
-/mctech-sdd-change
-/mctech-sdd-verify
-/mctech-sdd-fix
+/sdd-explore
+/sdd-analyze
+/sdd-decide
+/sdd-spec
+/sdd-plan
+/sdd-implement
+/sdd-change
+/sdd-verify
+/sdd-fix
 
 详细的命令介绍参见 <../README.md>

@@ -2,7 +2,7 @@
 
 ## User
 
-/mctech-sdd-verify refactor-permission-authorization --task 1,2,3
+/sdd-verify refactor-permission-authorization --task 1,2,3
 
 ## Assistant
 
@@ -188,7 +188,7 @@ AI Verify: `refactor-permission-authorization` — Tasks 1, 2, 3
 
 ## User
 
-/mctech-sdd-implement refactor-permission-authorization --task 3
+/sdd-implement refactor-permission-authorization --task 3
 
 ## Assistant
 
@@ -198,7 +198,7 @@ AI Verify: `refactor-permission-authorization` — Tasks 1, 2, 3
 
 ## 2. 实现内容
 
-Task 3 主体（3.1–3.7）此前已实现；本次补齐 mctech-sdd-verify 发现的缺口：
+Task 3 主体（3.1–3.7）此前已实现；本次补齐 sdd-verify 发现的缺口：
 
 - **3.1** `directoryIds` 拒绝逻辑收紧：请求体含 `directoryIds` 数组即抛 `DIRECTORY_IDS_CONTRACT_REMOVED`（含与 `grants` 混合场景）
 - **3.2/3.7** 新增 **AM.07**：AuthManagementService + 真实 PermissionService + MemoryRedis，验证 Grant 保存后 Redis 缓存写入

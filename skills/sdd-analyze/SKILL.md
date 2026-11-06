@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-analyze
+name: sdd-analyze
 description: Analyze a feature or refactoring problem based on the existing system and identify root causes, constraints, candidate solutions, trade-offs, migration risks, and recommended approaches before architecture decisions are made.
 argument-hint: "[problem-or-feature]"
 disable-model-invocation: true
@@ -150,5 +150,5 @@ $ARGUMENTS
 
 通常：
 
-/mctech-sdd-decide
-/mctech-sdd-spec
+/sdd-decide
+/sdd-spec

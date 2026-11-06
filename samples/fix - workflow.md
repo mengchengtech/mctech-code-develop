@@ -2,16 +2,16 @@
 
 > 假如 Task3 执行完成后，发现有测试用例跑不通的，应该执行什么
 
-这种情况不要直接执行 `/mctech-sdd-implement` {next task}，也不要直接用 `/mctech-sdd-change` 走变更流程。
+这种情况不要直接执行 `/sdd-implement` {next task}，也不要直接用 `/sdd-change` 走变更流程。
 
 如果 Task3 已经完成，但运行/测试发现问题，首先运行要判断这是：
 
 Task3 实现错误 → 修复 Task3
 测试/环境问题 → 修复测试或环境
-Spec 本身有问题 → /mctech-sdd-change
-发现了新的业务需求 → /mctech-sdd-change
+Spec 本身有问题 → /sdd-change
+发现了新的业务需求 → /sdd-change
 
-默认应该先执行 `/mctech-sdd-verify`。
+默认应该先执行 `/sdd-verify`。
 
 执行 Task3 的完整流程
 
@@ -22,7 +22,7 @@ Spec 本身有问题 → /mctech-sdd-change
       ↓
     发现测试失败
       ↓
-    /mctech-sdd-verify --task 3
+    /sdd-verify --task 3
       ↓
     判断失败原因
 ```
@@ -30,26 +30,26 @@ Spec 本身有问题 → /mctech-sdd-change
 然后根据结果分流：
 
 ```plain
-                           /mctech-sdd-verify
+                           /sdd-verify
                                   │
           ┌───────────────────────┼──────────────────────┐
           ↓                       ↓                      ↓
        实现错误                  Spec问题             测试/环境问题
           │                       │                      │
           ↓                       ↓                      ↓
-    /mctech-sdd-fix      /mctech-sdd-change         修复测试/环境
+    /sdd-fix      /sdd-change         修复测试/环境
                                   │
                                   ↓
-                          /mctech-sdd-plan
+                          /sdd-plan
 ```
 
 核心原则：测试失败本身不是需求变更。
 
-只有 `/mctech-sdd-verify` 判断它涉及 Spec、Design、架构或业务规则变化 时，才进入 `/mctech-sdd-change`。这样可以避免一个非常常见的问题：AI 一看到测试失败，就擅自修改需求或扩大任务范围。
+只有 `/sdd-verify` 判断它涉及 Spec、Design、架构或业务规则变化 时，才进入 `/sdd-change`。这样可以避免一个非常常见的问题：AI 一看到测试失败，就擅自修改需求或扩大任务范围。
 
 ## 示例
 
-运行 `/mctech-sdd-verify`  返回 以下信息
+运行 `/sdd-verify`  返回 以下信息
 
 <div style="color: #e8f3fe">
 [FAIL] 3.3 — org-management 换公司未校验 grants  .......
@@ -73,7 +73,7 @@ RISK
 
 这个结果不能简单理解成“FAIL，所以全部修复”。实际上混合了 **真正的功能缺陷、Spec Drift、Cleanup 遗留、测试环境问题和本批次明确不包含的内容**。
 
-标准流程应该先做分类决策，再决定是 `/mctech-sdd-implement`、`/mctech-sdd-fix`、`/mctech-sdd-change` 还是继续 `/mctech-sdd-verify`。
+标准流程应该先做分类决策，再决定是 `/sdd-implement`、`/sdd-fix`、`/sdd-change` 还是继续 `/sdd-verify`。
 
 
 ```plain

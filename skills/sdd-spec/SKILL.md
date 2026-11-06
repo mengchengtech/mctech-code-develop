@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-spec
+name: sdd-spec
 description: Create or update OpenSpec proposal, design, and behavioral specifications from requirements, exploration results, and approved architecture decisions. Use before implementation to establish the authoritative expected behavior.
 argument-hint: "[change-or-feature]"
 disable-model-invocation: true
@@ -146,4 +146,4 @@ Then 系统必须拒绝请求
 
 通常：
 
-/mctech-sdd-plan
+/sdd-plan

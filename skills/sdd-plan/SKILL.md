@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-plan
+name: sdd-plan
 description: Convert an approved OpenSpec change into an executable implementation plan with dependency-aware tasks, clear scope, acceptance criteria, and test requirements.
 argument-hint: "[change-name]"
 disable-model-invocation: true
@@ -137,5 +137,5 @@ Spec → Task
 
 通常：
 
-/mctech-sdd-implement
-/mctech-sdd-change 
+/sdd-implement
+/sdd-change 

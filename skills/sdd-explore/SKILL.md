@@ -1,5 +1,5 @@
 ---
-name: mctech-sdd-explore
+name: sdd-explore
 description: Explore the existing system before making design or implementation decisions. Use to understand current architecture, modules, call flows, data flows, APIs, dependencies, tests, legacy behavior, and technical constraints for an SDD change.
 argument-hint: "[feature-or-module]"
 disable-model-invocation: true
@@ -190,4 +190,4 @@ $ARGUMENTS
 
 通常：
 
-/mctech-sdd-analyze
+/sdd-analyze
