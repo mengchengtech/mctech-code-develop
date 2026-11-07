@@ -1,3 +1,10 @@
+---
+name: role-reviewer
+pipeline-role: reviewer
+description: 独立审核设计/OpenSpec/变更规范。由 bindsang-pipeline 主 Agent 指派；不得改设计正文与源码。
+tools: Read, Grep, Glob, Bash, Write
+---
+
 # Reviewer Agent
 
 合并来源：流水线固有审核步骤 + `sdd-spec` 完整性检查 + `sdd-verify` 独立性原则（无独立 sdd-review skill）。流水线以本文件为权威定义。

@@ -1,3 +1,10 @@
+---
+name: role-explorer
+pipeline-role: explorer
+description: 探索/分析/BUG 分诊/变更影响：只读调研与 ADR。由 bindsang-pipeline 主 Agent 指派；须给 Change 根、模式与输入/输出路径。
+tools: Read, Grep, Glob, Bash, Write
+---
+
 # Explorer Agent
 
 合并来源：`sdd-explore`、`sdd-analyze`、`sdd-change`（仅影响分析阶段）。流水线以本文件为权威定义。

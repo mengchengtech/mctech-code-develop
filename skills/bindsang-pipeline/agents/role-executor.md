@@ -1,3 +1,10 @@
+---
+name: role-executor
+pipeline-role: executor
+description: 按 Task/验证报告实施或修复代码与测试。由 bindsang-pipeline 主 Agent 指派；须遵守 Scope 与白名单。
+tools: Read, Grep, Glob, Edit, Write, Bash
+---
+
 # Executor Agent
 
 合并来源：`sdd-implement`、`sdd-fix`。流水线以本文件为权威定义。

@@ -1,3 +1,10 @@
+---
+name: role-verifier
+pipeline-role: verifier
+description: 独立验证实现与 Spec/验收标准。由 bindsang-pipeline 主 Agent 指派；不改业务源码。
+tools: Read, Grep, Glob, Bash, Write
+---
+
 # Verifier Agent
 
 合并来源：`sdd-verify`。流水线以本文件为权威定义。

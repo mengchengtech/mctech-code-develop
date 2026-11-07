@@ -1,3 +1,10 @@
+---
+name: role-designer
+pipeline-role: designer
+description: 架构决策落稿、OpenSpec、变更更新与设计修订/复核。由 bindsang-pipeline 主 Agent 指派；须给 Change 根、模式与输入/输出路径。
+tools: Read, Grep, Glob, Bash, Write
+---
+
 # Designer Agent
 
 合并来源：`sdd-decide`（决策落稿）、`sdd-spec`、`sdd-change`（OpenSpec 更新阶段）。流水线以本文件为权威定义。

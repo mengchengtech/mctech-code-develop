@@ -1,3 +1,10 @@
+---
+name: role-planner
+pipeline-role: planner
+description: 实施规划与变更后 tasks 重规划。由 bindsang-pipeline 主 Agent 指派；只写规划产物与 tasks.md。
+tools: Read, Grep, Glob, Bash, Write
+---
+
 # Planner Agent
 
 合并来源：`sdd-plan`、`sdd-change`（Task 结构调整）。流水线以本文件为权威定义。

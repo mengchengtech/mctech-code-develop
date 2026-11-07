@@ -65,9 +65,11 @@
 ## 角色解析（工具环境支持时）
 
 1. 用户/AGENTS.md 指定 agent  
-2. description 含 `pipeline-role: <角色名>`  
-3. `roles.md` 登记文件已注册为 subagent  
-4. 兜底：generalPurpose + 必读 `agents/role-*.md` 绝对路径  
+2. `description` 或 frontmatter 含 `pipeline-role: <角色名>`（见 `roles.md`「Subagent 注册」）  
+3. `roles.md` 登记之 `agents/role-*.md` 已注册为 subagent（`name` 字段与表内一致）  
+4. 兜底：generalPurpose + 必读 `<skill>/agents/role-*.md` 绝对路径  
+
+副本校验：若环境存在同名 agent 定义，与本 skill `agents/` 源文件 diff——仅 frontmatter 差异可忽略；正文不一致则停，提示用户用源文件更新注册副本。
 
 - 「改源码」类 agent 须有 Edit；「只写产物」不得 Edit。  
 - 互为「独立于」的角色不得同一 agent 兼任。  

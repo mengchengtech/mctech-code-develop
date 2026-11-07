@@ -2,6 +2,19 @@
 
 各角色详细契约（含由 `skills/sdd-*` 合并的工作步骤与模式）见 `agents/role-*.md`。委派时须指定**角色 + 模式**（若适用）及输入/输出路径。
 
+## Subagent 注册
+
+| 角色 | agent 文件 | `name` | `pipeline-role` | 权限类 |
+|---|---|---|---|---|
+| explorer | `role-explorer.md` | `role-explorer` | `explorer` | 只读 |
+| designer | `role-designer.md` | `role-designer` | `designer` | 文档写入 |
+| reviewer | `role-reviewer.md` | `role-reviewer` | `reviewer` | 只读 |
+| planner | `role-planner.md` | `role-planner` | `planner` | 文档写入 |
+| executor | `role-executor.md` | `role-executor` | `executor` | 改源码 |
+| verifier | `role-verifier.md` | `role-verifier` | `verifier` | 只读/验证命令 |
+
+自定义 agent 的 `description` 建议含 `pipeline-role: <上表角色>`，以便主 Agent 按 `references/orchestrator-protocol.md` 解析。`tools` 须与权限类一致（改源码类必须有 Edit；只写产物类不得 Edit）。
+
 | 角色 | Agent 文件 | 权限类 | 模式（主 Agent 派发） | 独立于 | 产物 | 返回 |
 |---|---|---|---|---|---|---|
 | explorer | `agents/role-explorer.md` | 只读 | `explore` / `analyze` / `bug-triage` / `change-impact` | designer、reviewer、planner、executor、verifier | 探索/分析/变更影响/BUG ADR | `COMPLETED` / `NEED_INPUT` / `BLOCKED` / `FAILED` |

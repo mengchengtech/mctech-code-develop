@@ -8,15 +8,18 @@
 2. 在 `roles.md` 增一行：权限类、模式、独立于、产物、返回。  
 3. 评审/验证类在「独立于」填设计方或执行方。
 
-可选 frontmatter（Cursor 等环境）：
+必选 frontmatter（与既有 `agents/role-*.md` 一致；复制到 Cursor/子 Agent 注册目录时保留）：
 
 ```yaml
 ---
-name: role-xxx
-description: …由 bindsang-pipeline 主 Agent 指派…
-tools: Read, Grep, Glob, Bash, Write  # 改源码类加 Edit
+name: role-xxx          # 与文件名 role-xxx.md 对应
+pipeline-role: xxx    # 与 roles.md「角色」列一致，供编排解析
+description: 一句话 +「由 bindsang-pipeline 主 Agent 指派；须给 Change 根、模式与路径」
+tools: Read, Grep, Glob, Bash, Write   # 改源码类（executor）另加 Edit
 ---
 ```
+
+新增角色时同步更新 `roles.md`「Subagent 注册」表与上表「角色」行。
 
 **自检**：tools 与权限类一致；规则含 `decisions-log.md` 只读；路径以派发为准；模式输入/输出写清；不写死某条流水线阶段名（用 Change 根相对路径）。
 
