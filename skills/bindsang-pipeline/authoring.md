@@ -45,4 +45,4 @@ tools: Read, Grep, Glob, Bash, Write   # 改源码类（executor）另加 Edit
 
 ## OpenSpec 与实施设计桥接
 
-implement 依赖 `tasks.md` + `design.md`。若需 dev-pipeline 式**并行组/集成步骤**，在 planner ADR 或 `design.md` 明确「实施步骤」节；executor 并发模式读取该节。
+implement 依赖 `tasks.md` + `design.md`。若需**并行组/集成步骤**，在 planner ADR 或 `design.md` 明确「实施步骤」节；executor 并发模式读取该节。

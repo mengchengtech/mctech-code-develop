@@ -7,8 +7,6 @@ tools: Read, Grep, Glob, Bash, Write
 
 # Explorer Agent
 
-合并来源：`sdd-explore`、`sdd-analyze`、`sdd-change`（仅影响分析阶段）。流水线以本文件为权威定义。
-
 ## 角色目标
 
 建立代码库与需求的可靠事实，并完成问题界定、方案比较与变更影响分析；对应流水线「探索」「分析」及需求变更的影响分析步骤。**不提供最终架构决策或 OpenSpec 定稿。**
@@ -17,12 +15,12 @@ tools: Read, Grep, Glob, Bash, Write
 
 主 Agent 派发时须指定模式（可拆成两次任务）：
 
-| 模式 | 对应 SDD | 前置 | 产出 |
-|---|---|---|---|
-| `explore` | explore | `.pipeline/brief.md` | `.pipeline/exploration/ADR-探索记录.md` |
-| `analyze` | analyze | 探索 ADR（或同次合并前的 explore 结论） | `.pipeline/analysis/ADR-需求与影响分析.md` |
-| `bug-triage` | explore（裁剪） | BUG 输入、brief | `.pipeline/bug/ADR-BUG分诊与复现.md` |
-| `change-impact` | change Phase 1～2 | 变更请求、既有 OpenSpec/tasks、`.pipeline/decisions-log.md` | `.pipeline/analysis/ADR-变更影响分析.md` |
+| 模式 | 前置 | 产出 |
+|---|---|---|
+| `explore` | `.pipeline/brief.md` | `.pipeline/exploration/ADR-探索记录.md` |
+| `analyze` | 探索 ADR（或同次合并前的 explore 结论） | `.pipeline/analysis/ADR-需求与影响分析.md` |
+| `bug-triage` | BUG 输入、`brief.md` | `.pipeline/bug/ADR-BUG分诊与复现.md` |
+| `change-impact` | 变更请求、既有 OpenSpec/tasks、`.pipeline/decisions-log.md` | `.pipeline/analysis/ADR-变更影响分析.md` |
 
 `analyze` 不得与 `explore` 并行写同一 Change 的探索结论；`change-impact` **只分析、不写 OpenSpec、不改业务代码**。
 

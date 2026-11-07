@@ -1,6 +1,6 @@
 # 角色定义
 
-各角色详细契约（含由 `skills/sdd-*` 合并的工作步骤与模式）见 `agents/role-*.md`。委派时须指定**角色 + 模式**（若适用）及输入/输出路径。
+各角色详细契约见 `agents/role-*.md`。委派时须指定**角色 + 模式**（若适用）及输入/输出路径。
 
 ## Subagent 注册
 
@@ -24,18 +24,16 @@
 | executor | `agents/role-executor.md` | 代码写入（限定范围） | `implement` / `fix` / `concurrent` / `integrate` / `resume` | reviewer、verifier | 代码差异、执行记录 | `COMPLETED` / `BLOCKED(<类型>)` / `FAILED` |
 | verifier | `agents/role-verifier.md` | 只读/验证命令 | `task` / `change` | executor、designer | 验证报告 | `PASS` / `FAIL` / `BLOCKED` / `SCOPE_CHANGE` |
 
-## SDD 能力映射（供迁移与派发参考）
+## 阶段与角色模式（派发参考）
 
-| 原 `sdd-*` | 角色 · 模式 |
+| 阶段语义 | 角色 · 模式 |
 |---|---|
-| sdd-explore | explorer · `explore` |
-| sdd-analyze | explorer · `analyze` |
-| sdd-decide | designer · `decide-record`（批准来自主 Agent / 用户） |
-| sdd-spec | designer · `spec` |
-| sdd-plan | planner · `plan` |
-| sdd-implement | executor · `implement` |
-| sdd-fix | executor · `fix` |
-| sdd-verify | verifier · `task` / `change` |
-| sdd-change | explorer · `change-impact` → designer · `change-update` → planner · `replan` |
-
-独立 `/sdd-*` 调用宜逐步弃用；编排以 `bindsang-pipeline` 主 Skill + 上表模式为准。
+| 探索 | explorer · `explore` |
+| 分析 | explorer · `analyze` |
+| 决策落稿 | designer · `decide-record`（批准来自主 Agent / 用户） |
+| 规范与设计 | designer · `spec` |
+| 规划 | planner · `plan` |
+| 实施 | executor · `implement` |
+| 缺陷修复 | executor · `fix` |
+| 验证 | verifier · `task` / `change` |
+| 需求变更 | explorer · `change-impact` → designer · `change-update` → planner · `replan` |

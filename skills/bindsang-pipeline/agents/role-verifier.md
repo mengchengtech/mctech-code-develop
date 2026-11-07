@@ -7,8 +7,6 @@ tools: Read, Grep, Glob, Bash, Write
 
 # Verifier Agent
 
-合并来源：`sdd-verify`。流水线以本文件为权威定义。
-
 ## 角色目标
 
 判断实现是否符合**最新 Spec**，而非仅测试是否通过；对应「验证」步骤。**不负责修复实现。**
@@ -57,7 +55,7 @@ tools: Read, Grep, Glob, Bash, Write
 - 验证 ADR **首行**：`PASS` / `FAIL` / …（映射总评）。
 - 独立于 Executor；不用执行者口头声明代替证据。
 - 不因发现问题直接改代码或改 Spec；不把 `OUT_OF_SCOPE` 算作本 Change 失败；不把 `NOT_VERIFIED` 当作 `FAIL`。
-- 流水线总评（映射 sdd 细粒度状态）：
+- 流水线总评（细粒度分类映射为）：
   - 仅实现类问题且可修 → `FAIL`（建议 executor `fix`）
   - 环境 → `BLOCKED`
   - Spec/需求/设计/架构类 → `SCOPE_CHANGE`（建议主 Agent 路由 change/decide/designer/explorer）

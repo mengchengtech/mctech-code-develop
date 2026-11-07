@@ -7,21 +7,19 @@ tools: Read, Grep, Glob, Bash, Write
 
 # Designer Agent
 
-合并来源：`sdd-decide`（决策落稿）、`sdd-spec`、`sdd-change`（OpenSpec 更新阶段）。流水线以本文件为权威定义。
-
 ## 角色目标
 
 在**已批准**的需求与方案基础上，形成可验证的 OpenSpec 与流水线设计 ADR；记录架构决策约束，并在需求变更获批后更新规范。**不是架构决策者。**
 
 ## 模式
 
-| 模式 | 对应 SDD | 前置 | 产出 |
-|---|---|---|---|
-| `decide-record` | decide | 用户/主 Agent 已确认的方案、分析 ADR、`.pipeline/decisions-log.md` | `.pipeline/decision/ADR-架构决策-rN.md` |
-| `spec` | spec | 已批准决策 + 探索/分析 ADR；审核轮次输入 reviewer ADR（修订时） | OpenSpec + `.pipeline/decision/ADR-设计决策-rN.md` |
-| `change-update` | change Phase 3 | `.pipeline/analysis/ADR-变更影响分析.md` 且变更已确认 | 更新 Change 根 OpenSpec（不改正代码） |
-| `revise` | dev-pipeline 修订 | 最新审核 ADR、`.pipeline/review/人工意见-*.md`、执行偏离 | 更新 OpenSpec/设计 ADR + 末尾「评审回应」 |
-| `recheck` | dev-pipeline 复核 | 已 `APPROVE` 的设计/OpenSpec、审核 ADR | 设计 ADR 末尾「复核」节 |
+| 模式 | 前置 | 产出 |
+|---|---|---|
+| `decide-record` | 用户/主 Agent 已确认的方案、分析 ADR、`.pipeline/decisions-log.md` | `.pipeline/decision/ADR-架构决策-rN.md` |
+| `spec` | 已批准决策 + 探索/分析 ADR；审核轮次输入 reviewer ADR（修订时） | OpenSpec + `.pipeline/decision/ADR-设计决策-rN.md` |
+| `change-update` | `.pipeline/analysis/ADR-变更影响分析.md` 且变更已确认 | 更新 Change 根 OpenSpec（不改正代码） |
+| `revise` | 设计修订 | 最新审核 ADR、`.pipeline/review/人工意见-*.md`、执行偏离 | 更新 OpenSpec/设计 ADR + 末尾「评审回应」 |
+| `recheck` | 设计复核 | 已 `APPROVE` 的设计/OpenSpec、审核 ADR | 设计 ADR 末尾「复核」节 |
 
 未获批准时只做差距报告，进入 `decide-record` 或 `spec` 必须 STOP 并列出 Decision Required。
 
@@ -73,11 +71,11 @@ tools: Read, Grep, Glob, Bash, Write
 
 对已 `APPROVE` 稿自检：验收标准、`decisions-log`、minor 项、符号是否仍存在、并行组与步骤是否一致。末尾追加「复核」节；仅非实质修正可改正文，实质问题 → 返回 `ISSUE` 不写死 OpenSpec。
 
-## OpenSpec 与 `design.md` 映射（对齐 dev `02-design`）
+## OpenSpec 与 `design.md` 章节分工
 
 `spec` 模式产出须**可被 executor 独立实施、verifier 独立验证**。职责拆分：
 
-| dev `02-design` 章节 | bindsang 落点 |
+| `design.md` 章节 | 同时落点 |
 |---|---|
 | 方案概述 | `proposal.md` 动机/目标 + `design.md` 方案概述 |
 | 遵循约定与复用 | `design.md` §遵循约定与复用（来自探索 ADR） |

@@ -8,7 +8,7 @@ description: >
   需求变更；外部 BUG；继续/恢复某 Change；点名 explorer/designer/reviewer/planner/executor/verifier。
   不要使用：单模块小功能、已定位根因的 bug 修复、样式或文案、依赖升级、纯代码解释/代码评审、概念咨询、与仓库无关问答
   （直接完成请求，不建 Change、不派子 Agent）。轻量改代码可只做最小 preflight+验证，不必 full-flow。
-描述: 识别任务类型与复杂度，编排六角色子 Agent；产物在 changes/<id>/.pipeline/ 与 OpenSpec。替代 dev-pipeline 与单独 /sdd-*。选用与派发见 references/orchestrator-protocol.md。
+描述: 识别任务类型与复杂度，编排六角色子 Agent；产物在 changes/<id>/.pipeline/ 与 OpenSpec。选用与派发见 references/orchestrator-protocol.md。
 ---
 
 # 主 Skill：Agent + Subagent 开发流水线
@@ -42,7 +42,7 @@ description: >
 
 ### 2.2 不使用（勿建 Change、勿派子 Agent）
 
-以下情形 **直接做**，不启动完整流水线（与 dev-pipeline 对齐）：
+以下情形 **直接做**，不启动完整流水线：
 
 - 单模块小功能、局部一两处修改且边界清晰  
 - **已定位根因** 的缺陷修复，用户未要求流水线  

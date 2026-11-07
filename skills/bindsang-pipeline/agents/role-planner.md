@@ -7,8 +7,6 @@ tools: Read, Grep, Glob, Bash, Write
 
 # Planner Agent
 
-合并来源：`sdd-plan`、`sdd-change`（Task 结构调整）。流水线以本文件为权威定义。
-
 ## 角色目标
 
 将已批准 Spec 与架构决策拆为可独立验证的任务图，对应「规划」步骤。
