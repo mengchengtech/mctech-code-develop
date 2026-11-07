@@ -3,7 +3,7 @@
 - `SKILL.md`：主入口、触发条件、任务分类、复杂度裁剪、自定义角色组合和调度规则。
 - `roles.md`：角色索引表，仅保留角色、Agent 文件、权限类、模式、独立性、产物和返回值。
 - `agents/role-*.md`：角色职责、规则、约束、**模式**（由原 `skills/sdd-*` 合并）、输出结构、返回码与完成判据。
-- `pipelines/`：五条标准流水线。
+- `pipelines/`：`full-flow`、`design-review`、`implement-verify`、`requirement-change`、`bug-feedback`（阶段表、预算、检查点见各文件）。
 - `references/orchestrator-protocol.md`：调度协议（派发、硬约束、并发、恢复）。
 - `references/`：交互协议、产物规范、状态机、回滚和反馈路由。
 - `authoring.md`：新增角色/流水线编写与自检。

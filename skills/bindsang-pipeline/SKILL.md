@@ -139,11 +139,11 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 | 类型 | 主路径 |
 |---|---|
-| 全流程开发 | preflight → 探索 → 分析 → (设计 → 审核)* → 人工确认 → 规划 → (执行 → 验证)* |
-| 只设计评审 | preflight → 探索 → 分析 → (设计 → 审核)* → 人工确认 → 结束/待实施 |
-| 只实现和验证 | preflight → 规划 → (执行 → 验证)* |
-| 需求变更 | preflight → 需求变更登记 → 分析 → (设计 → 审核)* → 人工确认 → 规划 → (执行 → 验证)* |
-| BUG 反馈 | preflight → BUG 接收/分诊 → 复现 → 定位 → 修复方案 → (审核)* → 确认（按风险）→ 规划 → (执行 → 验证)* |
+| 全流程开发 | 见 `pipelines/full-flow.md` |
+| 只设计评审 | 见 `pipelines/design-review.md` |
+| 只实现和验证 | 见 `pipelines/implement-verify.md` |
+| 需求变更 | 见 `pipelines/requirement-change.md` |
+| BUG 反馈 | 见 `pipelines/bug-feedback.md` |
 
 `*` 表示可重复。设计审核循环由审核结论驱动；执行验证循环由验证结果驱动。
 
