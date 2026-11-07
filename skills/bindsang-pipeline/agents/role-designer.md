@@ -18,8 +18,8 @@ tools: Read, Grep, Glob, Bash, Write
 | `decide-record` | 用户/主 Agent 已确认的方案、分析 ADR、`.pipeline/decisions-log.md` | `.pipeline/decision/ADR-架构决策-rN.md` |
 | `spec` | 已批准决策 + 探索/分析 ADR；审核轮次输入 reviewer ADR（修订时） | OpenSpec + `.pipeline/decision/ADR-设计决策-rN.md` |
 | `change-update` | `.pipeline/analysis/ADR-变更影响分析.md` 且变更已确认 | 更新 Change 根 OpenSpec（不改正代码） |
-| `revise` | 设计修订 | 最新审核 ADR、`.pipeline/review/人工意见-*.md`、执行偏离 | 更新 OpenSpec/设计 ADR + 末尾「评审回应」 |
-| `recheck` | 设计复核 | 已 `APPROVE` 的设计/OpenSpec、审核 ADR | 设计 ADR 末尾「复核」节 |
+| `revise` | 设计修订最新审核 ADR、`.pipeline/review/人工意见-*.md`、执行偏离 | 更新 OpenSpec/设计 ADR + 末尾「评审回应」 |
+| `recheck` | 设计复核已 `APPROVE` 的设计/OpenSpec、审核 ADR | 设计 ADR 末尾「复核」节 |
 
 未获批准时只做差距报告，进入 `decide-record` 或 `spec` 必须 STOP 并列出 Decision Required。
 
