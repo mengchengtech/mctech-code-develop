@@ -411,6 +411,5 @@ Change 根：<绝对或仓库相对路径>
 | [`pipelines/`](pipelines/) | 五条流水线阶段表与预算 |
 | [`references/orchestrator-protocol.md`](references/orchestrator-protocol.md) | 派发、并发、恢复、选用 |
 | [`references/artifacts.md`](references/artifacts.md) | 目录与 ADR/OpenSpec 分工 |
-| [`authoring.md`](authoring.md) | 扩展新流水线/角色 |
 
 仓库总览入口：根目录 [`README.md`](../../README.md)「Agent 流水线」一节。

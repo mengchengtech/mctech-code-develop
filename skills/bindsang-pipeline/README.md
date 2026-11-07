@@ -9,7 +9,6 @@
 - `pipelines/`：`full-flow`、`design-review`、`implement-verify`、`requirement-change`、`bug-feedback`（阶段表、预算、检查点见各文件）。
 - `references/orchestrator-protocol.md`：调度协议（派发、硬约束、并发、恢复）。
 - `references/`：交互协议、产物规范、状态机、回滚和反馈路由。
-- `authoring.md`：新增角色/流水线编写与自检。
 
 Change 根目录（`changes/<id>/` 或 `openspec/changes/<id>/`）存放 OpenSpec；流水线状态与各阶段 ADR 写在 `<change-root>/.pipeline/` 下（见 `references/artifacts.md`）。
 

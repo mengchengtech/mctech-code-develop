@@ -184,7 +184,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 ## 7. 主 Agent 调度规则
 
-编排层协议（选用、派发块、硬约束、并发、角色解析、恢复、结束汇报）见 **`references/orchestrator-protocol.md`**。编写流水线/角色见 **`authoring.md`**。
+编排层协议（选用、派发块、硬约束、并发、角色解析、恢复、结束汇报）见 **`references/orchestrator-protocol.md`**。
 
 1. 每个阶段开始前，读取当前状态与该阶段输入；确认前置产物存在。
 2. 根据 `roles.md` 选择角色与**模式**，读取 `agents/role-*.md`，并按 `pipelines/<task_type>.md` 执行阶段与预算。

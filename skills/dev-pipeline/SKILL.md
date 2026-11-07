@@ -21,7 +21,6 @@ description: >
 dev-pipeline/
 ├── SKILL.md       协议（本文件）
 ├── roles.md       角色注册表：读它确定可用角色、权限类、产物名
-├── authoring.md   新增角色 / 编写流水线时读
 ├── agents/        角色文件 pipeline-*.md
 └── pipelines/     dev.md · design-review.md · impl-verify.md
 ```
