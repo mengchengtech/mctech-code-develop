@@ -44,20 +44,9 @@ AI 规范驱动开发流程是一套基于 OpenSpec、SDD（Specification-Driven
 | 外部 BUG | `bug-feedback` |
 | 单点探索 / 只派一个角色 | bindsang 单点派发（见 `references/orchestrator-protocol.md`） |
 
-**已弃用（勿新建）**
+并发上限等写在 Change 的 `brief.md`（如 `concurrency`，默认 3；见 [`orchestrator-protocol.md`](skills/bindsang-pipeline/references/orchestrator-protocol.md)）。使用说明见 [`USAGE.md`](skills/bindsang-pipeline/USAGE.md)。
 
-| 旧入口 | 替代 |
-|---|---|
-| [`skills/dev-pipeline/`](skills/dev-pipeline/) | **bindsang-pipeline**（编排协议、并发、检查点已迁入；任务目录由 Change 根 + `.pipeline/` 代替仓库根 `.pipeline/<date>/`） |
-| 单独调用 `/sdd-*` | 由主 Agent 按角色 **模式** 派发（见 `bindsang-pipeline/roles.md` 映射表）；下文 `/sdd-*` 仍作**阶段语义**参考 |
-
-| 原 dev-pipeline 流水线 | bindsang `pipelines/` |
-|---|---|
-| `dev` | `full-flow` |
-| `design-review` | `design-review` |
-| `impl-verify` | `implement-verify` |
-
-AGENTS.md 里若仍写 `dev-pipeline 并发数`，可改为在 Change 的 `brief.md` 中配置 `concurrency`（见 bindsang `orchestrator-protocol.md`）。
+单独调用 `/sdd-*` 时，由主 Agent 按角色 **模式** 派发（见 `bindsang-pipeline/roles.md`）；下文 `/sdd-*` 仍作**阶段语义**参考。
 
 ## 命令速查表
 

@@ -5,7 +5,7 @@
 
 从 step9开始，切换到 `sdd-*` 命令模式，不再每次都贴大段的 Prompt 给 AI 模型了
 
-> **新实践**：多 Agent 编排请用 [`skills/bindsang-pipeline`](../skills/bindsang-pipeline/)（Change + `.pipeline/`）；`sdd-*` 与已弃用的 `dev-pipeline` 能力已并入其角色定义。本案例步骤文件仍按当时 `/sdd-*` 叙述，语义与现流水线一致。
+> **新实践**：多 Agent 编排请用 [`skills/bindsang-pipeline`](../skills/bindsang-pipeline/)（Change + `.pipeline/`）；阶段能力见其 `agents/role-*.md`。本案例步骤文件仍按当时 `/sdd-*` 叙述，语义与现流水线一致。
 
 ## 整体流程
 
