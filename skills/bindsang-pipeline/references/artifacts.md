@@ -13,7 +13,7 @@
 
 ADR 至少包含：状态、Change、阶段、版本、日期、背景、目标/非目标、事实证据、分析/方案/审查内容、决策结论、影响权衡、风险缓解、验收标准、回滚方式、未决问题、关联文档。ADR 路径均在 `.pipeline/<阶段>/` 下。
 
-OpenSpec 映射：`proposal.md` 保存背景动机和范围；`specs/<capability>/spec.md` 保存需求与验收场景；`design.md` 保存设计（宜含改动清单、测试计划、**实施步骤**与并行组/集成步骤，供 executor 并发）；`tasks.md` 保存实施计划。ADR 保存决策依据、审查、人工确认和验证证据。两者互相引用，不重复堆叠全文。每轮设计/审核/执行/验证产生新版本，旧 ADR 标记已替代，不删除。
+OpenSpec 映射：`proposal.md` 保存背景动机和范围；`specs/<capability>/spec.md` 保存需求与验收场景；`design.md` 保存**可实施设计包**（章节与 dev `02-design` 对照见 `agents/role-designer.md` §映射）；`tasks.md` 保存实施计划。ADR 保存决策依据、审查、人工确认和验证证据。两者互相引用，不重复堆叠全文。每轮设计/审核/执行/验证产生新版本，旧 ADR 标记已替代，不删除。
 
 ## 编排记录（`.pipeline/` 根下）
 

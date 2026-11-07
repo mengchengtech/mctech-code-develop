@@ -33,7 +33,7 @@ tools: Read, Grep, Glob, Bash, Write
 
 ## 检查项（每项给结论）
 
-1. 验收标准 ↔ 设计/Spec ↔ 测试计划 ↔ 手段可验证。  
+1. 验收标准 ↔ `brief.md` ↔ `design.md` 测试计划 ↔ Spec ↔ 手段可验证（清单见 `role-designer.md` §自检）。  
 2. 设计中的路径/符号 Grep 存在。  
 3. 与探索 ADR/源码约定一致。  
 4. 影响面：调用方、依赖、配置无遗漏。  
