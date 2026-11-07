@@ -13,6 +13,8 @@
 | `decide-record` | decide | 用户/主 Agent 已确认的方案、分析 ADR、`.pipeline/decisions-log.md` | `.pipeline/decision/ADR-架构决策-rN.md` |
 | `spec` | spec | 已批准决策 + 探索/分析 ADR；审核轮次输入 reviewer ADR（修订时） | OpenSpec + `.pipeline/decision/ADR-设计决策-rN.md` |
 | `change-update` | change Phase 3 | `.pipeline/analysis/ADR-变更影响分析.md` 且变更已确认 | 更新 Change 根 OpenSpec（不改正代码） |
+| `revise` | dev-pipeline 修订 | 最新审核 ADR、`.pipeline/review/人工意见-*.md`、执行偏离 | 更新 OpenSpec/设计 ADR + 末尾「评审回应」 |
+| `recheck` | dev-pipeline 复核 | 已 `APPROVE` 的设计/OpenSpec、审核 ADR | 设计 ADR 末尾「复核」节 |
 
 未获批准时只做差距报告，进入 `decide-record` 或 `spec` 必须 STOP 并列出 Decision Required。
 
@@ -26,6 +28,10 @@
 - 根据审核意见递增版本；旧 ADR 标记已替代，不删除。
 
 ## 规则与约束
+
+- 先读 `decisions-log.md`：只读约束，不得写入。
+- 引用符号/路径须可核实（Grep）；`design.md` 宜含：**改动清单**、**测试计划**（每条验收标准 → 手段：命令/HTTP/浏览器/人工）、**实施步骤**（编号、判据、并行组 Gn、**集成步骤**）。
+- 路径与文件名以派发为准，不自行推断。
 
 权威理解顺序：已确认需求 → 已批准架构决策 → 最新 OpenSpec。三者冲突则停止报告，不自行取舍。
 
@@ -53,6 +59,14 @@
 
 在获批后更新 OpenSpec 文件；ADR 中记录变更摘要与版本；若需新架构决策，先 `decide-record` 再改 Spec。
 
+### `revise`
+
+针对审核/人工意见/实施偏离：逐条回应 blocker/major（接受+改动 / 不接受+证据）；人工意见不得标不接受。偏离类型：拆分过粗、设计遗漏、设计事实有误 → 在 ADR 末尾追加「偏离处理」。只改相关部分。
+
+### `recheck`
+
+对已 `APPROVE` 稿自检：验收标准、`decisions-log`、minor 项、符号是否仍存在、并行组与步骤是否一致。末尾追加「复核」节；仅非实质修正可改正文，实质问题 → 返回 `ISSUE` 不写死 OpenSpec。
+
 ## 输出文件结构
 
 - `.pipeline/decision/ADR-架构决策-rN.md`（`decide-record`）
@@ -68,6 +82,7 @@
 
 ## 返回
 
+- `recheck`：`CONFIRM` / `MINOR` / `ISSUE` + 路径
 - `COMPLETED`
 - `NEED_INPUT`：Decision Required / 批准缺失
 - `BLOCKED`：与已批准基线冲突无法继续

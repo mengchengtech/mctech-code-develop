@@ -105,9 +105,10 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 在 `<change-root>/.pipeline/` 下创建：
 - `pipeline-state.yaml`：机器可读的流程状态。
-- `brief.md`：目标、背景、范围、非目标、约束、验收标准、用户原始输入。
+- `brief.md`：目标、背景、范围、非目标、约束、**可验证验收标准**、**验证命令**、**验证环境**、开关、角色映射、用户原始输入。
 - `baseline.md`：仓库状态、基线 commit、分支、已有差异、测试基线。
-- `decisions-log.md`：人工决策与重要流程决策记录。
+- `decisions-log.md`：人工决策与重要流程决策记录（仅主 Agent 追加，规则见 `orchestrator-protocol.md`）。
+- `run.log`：派发审计（初始为空）。
 
 委派子 Agent 时，路径以 Change 根为基准：流水线文档使用 `.pipeline/` 前缀（例如 `.pipeline/brief.md`）；OpenSpec 文件使用 Change 根相对路径（例如 `design.md`）。
 
@@ -148,15 +149,17 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 ## 7. 主 Agent 调度规则
 
+编排层协议（选用、派发块、硬约束、并发、角色解析、恢复、结束汇报）见 **`references/orchestrator-protocol.md`**。编写流水线/角色见 **`authoring.md`**。
+
 1. 每个阶段开始前，读取当前状态与该阶段输入；确认前置产物存在。
-2. 根据 `roles.md` 选择角色，读取对应 `agents/role-*.md` 的职责契约，并根据 `pipelines/` 读取该任务的阶段定义。
-3. 每次委派只给一个明确角色、一个阶段目标、限定输入、输出文件路径（流水线 ADR 与状态类文件须在 `.pipeline/` 下）、约束和完成判据。
-4. 子 Agent 只提交建议和产物，不直接推进总状态、不自行请求其他 Agent、不自行改写用户已确认的基线。
-5. 主 Agent 对产物做完整性、前后矛盾、范围漂移和证据检查；不合格则退回原角色补充。
-6. 阶段完成后更新 `.pipeline/pipeline-state.yaml`、`.pipeline/decisions-log.md`，保存仓库。
-7. 到达人工确认点时，汇总选项、影响、风险、未决项和推荐方案，等待用户明确确认。
-8. 用户反馈后，分类为：接受并继续、要求补充、回退到指定阶段、范围变更、取消、回滚。
-9. 任何外部输入都不得覆盖已批准决策；必须追加新记录并评估影响。
+2. 根据 `roles.md` 选择角色与**模式**，读取 `agents/role-*.md`，并按 `pipelines/<task_type>.md` 执行阶段与预算。
+3. 委派遵守派发块：只传路径与约束，不复述产物全文（见 orchestrator-protocol）。
+4. 子 Agent 不推进总状态、不派生子 Agent、不改写 `decisions-log.md` 已确认项。
+5. 主 Agent 验收产物；读返回时优先 verdict，按需读节（见 orchestrator-protocol §读返回）。
+6. 阶段完成后更新 `pipeline-state.yaml`；确认决策追加 `decisions-log.md`；每次派发返回后追加 `run.log`。
+7. 到达人工确认点：按流水线「检查点」指令表停等用户（见 `pipelines/design-review.md` 等）。
+8. 用户反馈按 §8 路由；临时角色组合默认不自动循环（orchestrator-protocol）。
+9. 任何外部输入不得覆盖已批准决策；须追加记录并评估影响。
 
 ## 8. 人工确认后的自动路由
 
@@ -219,7 +222,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 - 默认只在本地工作区创建/更新文件，不自动 commit/push。
 - 建议阶段性提交：`docs(change-id): ...`、`feat(change-id): ...`、`fix(change-id): ...`。只有用户授权才执行 commit；push、发布和生产操作必须单独授权。
 - 每次状态变化更新 `.pipeline/pipeline-state.yaml`，包含当前阶段、状态、轮次、产物清单、基线 commit、最近保存点和待办。
-- 恢复时先检查 Git 状态与 `.pipeline/pipeline-state.yaml`，再确认文档与代码是否一致；发现不一致先报告，不盲目继续。
+- 恢复时读 `pipeline-state.yaml`、`brief.md`、`run.log` 末行与产物首行 verdict（见 orchestrator-protocol §恢复）；并核对 Git 与文档/代码一致性。
 
 ## 14. 结束条件
 

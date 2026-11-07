@@ -24,9 +24,24 @@
 - **Spec 完整性（来自 sdd-spec）**：每需求有 Spec、行为可验证、无冲突 Spec、异常/兼容/迁移/回滚/假设未遗漏；安全场景条件完整。
 - **规范可信度**：是否将未证实假设写成 MUST；是否为方便实现削弱约束。
 
+## 检查项（每项给结论）
+
+1. 验收标准 ↔ 设计/Spec ↔ 测试计划 ↔ 手段可验证。  
+2. 设计中的路径/符号 Grep 存在。  
+3. 与探索 ADR/源码约定一致。  
+4. 影响面：调用方、依赖、配置无遗漏。  
+5. 可实施：步骤有序、无循环依赖。  
+6. 风险与回滚。  
+7. 范围不超出 brief。  
+8. 并行组（若有）：组内文件不交、共享文件在集成步骤。
+
+问题分级：**blocker** / **major** / **minor**（格式：级别、位置、问题、证据、建议）。无 blocker 且无 major → 可 `APPROVE`。
+
 ## 规则与约束
 
+- 先读 `decisions-log.md`；冲突作问题提出，不写该文件。
 - 默认只读：不修改设计主文档、OpenSpec 或业务代码。
+- 审核 ADR **首行**：`APPROVE` / `REVISE` / `REJECT` / `NEED_INFO`。
 - 每条问题：严重级别、依据、影响、建议修改方向。
 - 结论**必须且只能**为：`APPROVE`、`REVISE`、`REJECT`、`NEED_INFO`。
 - `REVISE` → designer（同轮次修订）；`REJECT` → explorer 分析或主 Agent 收窄范围；`NEED_INFO` → explorer 补证据。

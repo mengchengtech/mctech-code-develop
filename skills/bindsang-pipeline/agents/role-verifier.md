@@ -41,7 +41,13 @@
 
 ## 规则与约束
 
+- 先读 `decisions-log.md`；不改正源码；Bash 不重定向写盘（验证产物、`/dev/null`、`.pipeline/verification/evidence/` 除外）。
+- 不采信 executor 自检；验收标准手段取自 `brief.md`/设计测试计划；缺环境 → 记入**环境阻塞**，不擅自换手段判 PASS。
+- 自启动服务须记 PID，结束关闭；凭据仅环境变量。
+- 有 git 时：**范围核对**——`git status`/`diff` 对照 `baseline.md` 与改动清单；设计外未记录改动 → FAIL。
+- 每条验收标准一行：`标准 → 手段 → 证据 → PASS/FAIL/UNVERIFIED`；测试须断言行为非仅「不抛错」。
 - 默认只读代码；可运行验证命令与生成报告。
+- 验证 ADR **首行**：`PASS` / `FAIL` / …（映射总评）。
 - 独立于 Executor；不用执行者口头声明代替证据。
 - 不因发现问题直接改代码或改 Spec；不把 `OUT_OF_SCOPE` 算作本 Change 失败；不把 `NOT_VERIFIED` 当作 `FAIL`。
 - 流水线总评（映射 sdd 细粒度状态）：

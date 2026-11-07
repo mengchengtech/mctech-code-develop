@@ -12,6 +12,9 @@
 |---|---|---|
 | `implement` | implement | 当前 Task（`tasks.md`）、OpenSpec、决策 ADR、执行记录前轮次 |
 | `fix` | fix | `.pipeline/verification/ADR-验证报告-rN.md` 中 IMPLEMENTATION_BUG / TEST_DEFECT / CONTRACT_DRIFT / CONFIGURATION_DEFECT 项 |
+| `concurrent` | dev 并发 | 派发：步骤编号、**文件白名单** | `执行记录-<组>.md` + 源码 |
+| `integrate` | dev 集成 | 全部并发执行 ADR | `执行记录-集成.md` |
+| `resume` | dev 续做 | 修订后 tasks/design + 既有执行 ADR | 新执行 ADR（仅本轮改动） |
 
 一次派发只处理**一个 Task** 或**一组明确 Issue ID**；fix 不得扩大 Task 范围。
 
@@ -35,6 +38,10 @@
 
 ## 规则与约束
 
+- 先读 `decisions-log.md`；不 `commit/push/stash/checkout/reset/clean`（授权 commit 除外）；不装依赖。
+- 按 `tasks.md`/`design.md` 实施步骤顺序；每步后对改动跑局部 lint/typecheck/相关测试。
+- 设计不可行 → **停止**，执行记录「偏离」节，返回 `BLOCKED(<类型>)`：`拆分过粗` | `设计遗漏` | `设计事实有误` | `需确认`（破坏性操作）。
+- `concurrent`：只改白名单；白名单外需求 → `BLOCKED` 同上。`integrate`：只改集成步骤文件；`resume`：不重写已完成且无影响的改动。
 - 仅写入派发授权范围；不覆盖用户未提交改动；开始前核对 baseline。
 - 遵守最新 Spec、Architecture Decision、Task Scope；保持兼容性。
 - 禁止：自行改 Spec/决策、扩大 Task、顺便重构无关代码、实现其他 Task、改 Out-of-Scope 模块。
@@ -53,6 +60,8 @@
 
 **fix** 记录含：Fix Report（Issue、Classification、Root Cause、Fix、Changed Files、Tests、Result、Spec Compliance、Remaining Issues）。
 
+执行 ADR 建议结构：改动文件表、偏离（无/步骤+证据）、自检命令结果、遗留。
+
 ## 完成判据
 
 计划内修改完成；差异可解释；测试/构建情况如实；fix 项有对应测试覆盖。
@@ -60,7 +69,7 @@
 ## 返回
 
 - `COMPLETED`
-- `BLOCKED`：Spec 不完整、与业务冲突、需改架构或其他 Task
+- `BLOCKED(<类型>)`：见上；主 Agent 路由设计/planner/用户确认
 - `FAILED`：无法实现且在范围内无法局部解决
 
 建议路由 → verifier（同 Task 或同批次）。

@@ -30,6 +30,9 @@
 
 ## 规则与约束
 
+- 先读 `decisions-log.md`；只读；Bash 仅只读命令（`git log/diff/show`、`ls` 等）。
+- 事实附 `path:line` 或命令输出；推测单独标记；探索模式**不写方案建议**。
+- `brief.md` 探索 ADR 宜摘录现有 **lint/typecheck/test/build** 命令与测试位置。
 - 默认只读：不修改业务代码、OpenSpec、`.pipeline/decisions-log.md` 中已确认决策。
 - 只基于实际代码、配置、文档、测试与库表定义；推测标注「已证实 / 推断 / 待确认」。
 - 不提前敲定最终架构；推荐方案 ≠ 批准方案。
