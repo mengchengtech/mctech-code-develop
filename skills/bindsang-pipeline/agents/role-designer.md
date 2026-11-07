@@ -18,8 +18,8 @@
 - 不可逆数据操作、破坏兼容或安全边界必须说明风险及回滚/补偿方案。
 
 ## 输出文件结构
-- `decision/ADR-设计决策-rN.md`
-- OpenSpec：`proposal.md`、`specs/<capability>/spec.md`、`design.md`
+- `.pipeline/decision/ADR-设计决策-rN.md`
+- OpenSpec（Change 根）：`proposal.md`、`specs/<capability>/spec.md`、`design.md`
 
 ## 完成判据
 方案覆盖需求、接口/数据、异常路径、兼容迁移、测试验收、风险和回滚；未决事项显式列出。

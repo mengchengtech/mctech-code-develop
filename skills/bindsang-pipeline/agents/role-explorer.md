@@ -19,9 +19,12 @@
 - 不得替用户决定业务规则或批准设计。
 
 ## 输出文件结构
-- `exploration/ADR-探索记录.md`
-- `analysis/ADR-需求与影响分析.md`
-- BUG 场景可增加 `bug/ADR-BUG分诊与复现.md`
+
+路径相对于 Change 根，写在 `.pipeline/` 下：
+
+- `.pipeline/exploration/ADR-探索记录.md`
+- `.pipeline/analysis/ADR-需求与影响分析.md`
+- BUG 场景可增加 `.pipeline/bug/ADR-BUG分诊与复现.md`
 
 ## 完成判据
 现状证据、需求边界、影响范围、风险、验收标准和未决问题均已记录，关键结论可追溯。

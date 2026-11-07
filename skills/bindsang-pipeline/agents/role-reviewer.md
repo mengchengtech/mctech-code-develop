@@ -18,7 +18,7 @@
 - `REVISE` 回到 Designer；`REJECT` 回到 Explorer 或需求分析；`NEED_INFO` 回到证据补充。
 
 ## 输出文件结构
-- `review/ADR-设计审核-rN.md`
+- `.pipeline/review/ADR-设计审核-rN.md`
 
 ## 完成判据
 给出明确结论；所有阻断项有证据、严重级别和可执行的处理建议。

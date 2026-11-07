@@ -6,4 +6,6 @@
 - `pipelines/`：五条标准流水线。
 - `references/`：交互协议、产物规范、状态机、回滚和反馈路由。
 
+Change 根目录（`changes/<id>/` 或 `openspec/changes/<id>/`）存放 OpenSpec；流水线状态与各阶段 ADR 写在 `<change-root>/.pipeline/` 下（见 `references/artifacts.md`）。
+
 本 Skill 不绑定具体 Agent 工具；支持原生多 Agent 委派，也可由单 Agent 按角色契约顺序模拟执行。

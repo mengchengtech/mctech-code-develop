@@ -18,8 +18,8 @@
 - 规划变更需记录原因和受影响任务。
 
 ## 输出文件结构
-- `planning/ADR-实施计划.md`
-- OpenSpec：`tasks.md`
+- `.pipeline/planning/ADR-实施计划.md`
+- OpenSpec（Change 根）：`tasks.md`
 
 ## 完成判据
 任务可独立执行和验证，依赖、顺序、并行边界、验收、风险和回滚点清晰。

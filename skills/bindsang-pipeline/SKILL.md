@@ -56,7 +56,7 @@
 - 未指定顺序时按角色依赖关系排序；不得违反输入依赖。例如 reviewer 必须先有可审核的设计或规格。
 - 自动补齐必要的前置准备、权限检查、人工确认门禁和收尾步骤；用户明确只出设计或禁止执行时，不得加入代码执行。
 - 缺少必要前置输入时暂停并请求补充；不得让后置角色基于不存在的产物工作。
-- 在 Change 下生成 `custom-pipeline.md`，记录用户原始要求、角色序列、依赖、裁剪理由、门禁和退出条件；状态文件标记 `task_type: custom`、角色序列及自定义定义文件路径。
+- 在 `.pipeline/custom-pipeline.md` 记录用户原始要求、角色序列、依赖、裁剪理由、门禁和退出条件；状态文件标记 `task_type: custom`、角色序列及自定义定义文件路径。
 - 临时流水线仍遵循角色权限、交互协议、产物规范、回滚和状态机；主 Agent 是唯一状态管理者。
 
 示例：
@@ -75,25 +75,45 @@
 2. 识别项目技术栈、模块边界、构建/测试/静态检查命令、代码规范和重要约束。
 3. 检查是否已有未完成 Change；询问或依据用户指定恢复目标，禁止静默覆盖。
 4. 创建唯一 Change 标识：`YYYYMMDD-短名称`；若冲突追加序号。
-5. 创建 Change 目录及状态文件。
+5. 创建 Change 根目录及 `.pipeline/` 子目录（含初始状态文件）。
 6. 建立基线：记录当前 Git commit、分支、工作区差异、关键测试基线（若可执行）。
 7. 读取项目现有规范、架构文档、OpenSpec 配置及 ADR 目录约定；优先沿用项目既有规范。
 8. 明确任务目标、非目标、已知约束、验收标准、风险和待确认事项。
 9. 生成初始任务简报并提交/保存到仓库。
 
-### 4.2 前置准备输出
+### 4.2 Change 根目录与 `.pipeline/`
 
-在 `changes/<change-id>/` 下创建：
+Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/changes/<change-id>/` 等既定结构，以其为 Change 根目录，不另建平行目录。
+
+**OpenSpec 交付物**写在 Change 根（`proposal.md`、`design.md`、`tasks.md`、`specs/` 等），便于 `openspec` CLI 校验。**流水线编排与子 Agent 产出的文档**一律写在 Change 根下的 `.pipeline/` 中，与规格交付物分离：
+
+```
+<change-root>/
+├── proposal.md、design.md、tasks.md、specs/…   # OpenSpec（Designer / Planner）
+└── .pipeline/
+    ├── pipeline-state.yaml
+    ├── brief.md
+    ├── baseline.md
+    ├── decisions-log.md
+    ├── custom-pipeline.md          # 仅 task_type: custom 时
+    ├── exploration/、analysis/、decision/、review/
+    ├── planning/、execution/、verification/、bug/
+    └── …各阶段 ADR 与执行记录
+```
+
+### 4.3 前置准备输出
+
+在 `<change-root>/.pipeline/` 下创建：
 - `pipeline-state.yaml`：机器可读的流程状态。
 - `brief.md`：目标、背景、范围、非目标、约束、验收标准、用户原始输入。
 - `baseline.md`：仓库状态、基线 commit、分支、已有差异、测试基线。
 - `decisions-log.md`：人工决策与重要流程决策记录。
 
-若仓库已有 `openspec/changes/` 等既定结构，应优先适配，不强制另建平行目录；但必须保留本 Skill 的状态与 ADR 分层约定。
+委派子 Agent 时，路径以 Change 根为基准：流水线文档使用 `.pipeline/` 前缀（例如 `.pipeline/brief.md`）；OpenSpec 文件使用 Change 根相对路径（例如 `design.md`）。
 
 ## 5. 复杂度评估与动态裁剪
 
-由主 Agent 在 `preflight` 后给出复杂度：`L1-轻量`、`L2-中等`、`L3-复杂`。说明依据并记录在 `brief.md`。
+由主 Agent 在 `preflight` 后给出复杂度：`L1-轻量`、`L2-中等`、`L3-复杂`。说明依据并记录在 `.pipeline/brief.md`。
 
 | 维度 | L1 | L2 | L3 |
 |---|---|---|---|
@@ -130,10 +150,10 @@
 
 1. 每个阶段开始前，读取当前状态与该阶段输入；确认前置产物存在。
 2. 根据 `roles.md` 选择角色，读取对应 `agents/role-*.md` 的职责契约，并根据 `pipelines/` 读取该任务的阶段定义。
-3. 每次委派只给一个明确角色、一个阶段目标、限定输入、输出文件路径、约束和完成判据。
+3. 每次委派只给一个明确角色、一个阶段目标、限定输入、输出文件路径（流水线 ADR 与状态类文件须在 `.pipeline/` 下）、约束和完成判据。
 4. 子 Agent 只提交建议和产物，不直接推进总状态、不自行请求其他 Agent、不自行改写用户已确认的基线。
 5. 主 Agent 对产物做完整性、前后矛盾、范围漂移和证据检查；不合格则退回原角色补充。
-6. 阶段完成后更新 `pipeline-state.yaml`、`decisions-log.md`，保存仓库。
+6. 阶段完成后更新 `.pipeline/pipeline-state.yaml`、`.pipeline/decisions-log.md`，保存仓库。
 7. 到达人工确认点时，汇总选项、影响、风险、未决项和推荐方案，等待用户明确确认。
 8. 用户反馈后，分类为：接受并继续、要求补充、回退到指定阶段、范围变更、取消、回滚。
 9. 任何外部输入都不得覆盖已批准决策；必须追加新记录并评估影响。
@@ -198,8 +218,8 @@
 - 每个阶段结束后保存文档；每个执行批次结束后保存代码和验证证据。
 - 默认只在本地工作区创建/更新文件，不自动 commit/push。
 - 建议阶段性提交：`docs(change-id): ...`、`feat(change-id): ...`、`fix(change-id): ...`。只有用户授权才执行 commit；push、发布和生产操作必须单独授权。
-- 每次状态变化更新 `pipeline-state.yaml`，包含当前阶段、状态、轮次、产物清单、基线 commit、最近保存点和待办。
-- 恢复时先检查 Git 状态和状态文件，再确认文档与代码是否一致；发现不一致先报告，不盲目继续。
+- 每次状态变化更新 `.pipeline/pipeline-state.yaml`，包含当前阶段、状态、轮次、产物清单、基线 commit、最近保存点和待办。
+- 恢复时先检查 Git 状态与 `.pipeline/pipeline-state.yaml`，再确认文档与代码是否一致；发现不一致先报告，不盲目继续。
 
 ## 14. 结束条件
 
@@ -209,6 +229,6 @@
 - 设计/变更/BUG 决策有记录；
 - OpenSpec 与实现状态一致；
 - 风险、未解决问题、回滚方式和后续事项已记录；
-- `pipeline-state.yaml` 标记 `completed`、`completed_with_exceptions` 或 `awaiting_human`。
+- `.pipeline/pipeline-state.yaml` 标记 `completed`、`completed_with_exceptions` 或 `awaiting_human`。
 
 结束时向用户输出：完成摘要、变更文件、验证证据、未解决项、风险、回滚点和下一步建议。
