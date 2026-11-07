@@ -1,8 +1,14 @@
 ---
 name: bindsang-pipeline
 名称: bindsang-pipeline
-描述: 识别软件开发任务类型与复杂度，编排子 Agent（explorer/designer/reviewer/planner/executor/verifier）完成 OpenSpec Change 全流程；替代已弃用的 skills/dev-pipeline 与单独 /sdd-* 派发。产物在 changes/<id>/.pipeline/。
-版本: 1.1.0
+版本: 1.2.0
+description: >
+  编排子 Agent 完成 OpenSpec Change（探索→设计→审核→规划→实施→验证；含需求变更与外部 BUG）。
+  使用：用户要求「流水线 / 子智能体 / 多 Agent」；跨模块功能、重构、公共接口变更；只要设计+评审；已有 Spec 要实施验证；
+  需求变更；外部 BUG；继续/恢复某 Change；点名 explorer/designer/reviewer/planner/executor/verifier。
+  不要使用：单模块小功能、已定位根因的 bug 修复、样式或文案、依赖升级、纯代码解释/代码评审、概念咨询、与仓库无关问答
+  （直接完成请求，不建 Change、不派子 Agent）。轻量改代码可只做最小 preflight+验证，不必 full-flow。
+描述: 识别任务类型与复杂度，编排六角色子 Agent；产物在 changes/<id>/.pipeline/ 与 OpenSpec。替代 dev-pipeline 与单独 /sdd-*。选用与派发见 references/orchestrator-protocol.md。
 ---
 
 # 主 Skill：Agent + Subagent 开发流水线
@@ -15,18 +21,46 @@ name: bindsang-pipeline
 
 本 Skill 不依赖某一款 Agent 工具。若运行环境不支持真正的多 Agent，则由主 Agent 按角色提示分阶段模拟执行，并保持相同的输入、输出和检查协议。
 
-## 2. 触发条件
+## 2. 何时使用 / 不使用
 
-当用户提出以下任一类软件工程任务时启动本 Skill：
+与 `references/orchestrator-protocol.md` §选用 一致：命中「使用」→ 读 §3 分类并打开对应 `pipelines/<id>.md`；命中「不使用」→ **不加载本 Skill 编排**，直接完成用户请求。
 
-- 新功能、重构、架构调整、较大范围代码改造；
-- 明确要求“出设计”“方案评审”“先设计不实现”；
-- 明确要求“实施”“执行”“开发”“验证”；
-- 明确说明是需求变更，或描述体现为既有功能的扩展、优化、行为改变；
-- 明确报告 BUG，或描述异常现象、错误结果、崩溃、性能退化等问题；
-- 要求继续、恢复、回滚、调整某个尚未结束的 Change。
+### 2.1 使用（满足任一条即可考虑）
 
-如果只是概念咨询、代码片段解释、与仓库无关的一次性问答，不启动完整流水线；可直接回答。若用户要求改动代码但任务极小，可使用轻量执行路径，并仍执行必要的前置准备、验证和持久化。
+| 用户意图 / 关键词 | 典型 `task_type` |
+|---|---|
+| 流水线、子智能体、多 Agent、分角色、bindsang | 按 §3 分类 |
+| 新功能、大重构、跨模块、公共接口/契约变更 | `full-flow` |
+| 出设计、方案、架构、先不实现、设计评审 | `design-review` |
+| 按已定设计/OpenSpec 实施、执行 Task、验证 | `implement-verify` |
+| 需求变了、改规则、扩范围、行为变更 | `requirement-change` |
+| 报 BUG、崩溃、不一致、线上异常（外部输入） | `bug-feedback` |
+| 继续 / 恢复 / 调整未结束 Change | 读 `pipeline-state.yaml` 续跑 |
+| 点名 `explorer` / `designer` / … 或描述角色顺序 | 单点或 §3.1 临时组合 |
+
+各流水线「先问再用」条件（跨多文件、 unfamiliar 代码、多方案取舍、验收不明等）见 `pipelines/full-flow.md` 等 **触发** 节；满足时一句话说明多 Agent 代价后询问，用户同意再 preflight。
+
+### 2.2 不使用（勿建 Change、勿派子 Agent）
+
+以下情形 **直接做**，不启动完整流水线（与 dev-pipeline 对齐）：
+
+- 单模块小功能、局部一两处修改且边界清晰  
+- **已定位根因** 的缺陷修复，用户未要求流水线  
+- 样式、文案、配置微调（无行为/契约变化）  
+- 仅升级依赖、锁版本（无配套改造流水线）  
+- 代码解释、走读、**代码评审**（非独立 reviewer 角色委派）  
+- 概念咨询、算法/语法问答、与当前仓库无关的一次性问题的  
+- 用户明确「不要流水线 / 不用子 Agent / 你直接改」
+
+内部 verifier 发现的实现问题：留在当前 Change 的 `implement-verify` 循环，**不**为此新建 `bug-feedback`。
+
+### 2.3 轻量路径
+
+用户要小改代码但未禁流水线时：可 **L1** 裁剪（§5，合并探索+分析、简化审核），仍须 `brief.md`、基线、必要验证与 `.pipeline/` 记录；不得跳过用户已声明的破坏性风险确认。
+
+### 2.4 歧义
+
+无法判断「讨论方案」是否授权改代码 → **只问一个关键问题**；未确认前不得 executor。不得把「一起看看」默认为实施许可。
 
 ## 3. 入口识别与任务分类
 
