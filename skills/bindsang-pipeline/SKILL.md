@@ -1,7 +1,8 @@
 ---
-名称: agent-subagent-dev-pipeline
-描述: 识别软件开发任务类型与复杂度，启动并编排探索、分析、设计、审核、人工确认、规划、执行、验证、反馈及变更处理流水线。
-版本: 1.0.0
+name: bindsang-pipeline
+名称: bindsang-pipeline
+描述: 识别软件开发任务类型与复杂度，编排子 Agent（explorer/designer/reviewer/planner/executor/verifier）完成 OpenSpec Change 全流程；替代已弃用的 skills/dev-pipeline 与单独 /sdd-* 派发。产物在 changes/<id>/.pipeline/。
+版本: 1.1.0
 ---
 
 # 主 Skill：Agent + Subagent 开发流水线

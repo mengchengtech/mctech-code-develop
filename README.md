@@ -31,19 +31,49 @@ AI 规范驱动开发流程是一套基于 OpenSpec、SDD（Specification-Driven
 
 > OpenSpec 标准命令负责“规范驱动开发流程”，/sdd-* 负责把这个流程进一步拆成适合 AI Agent 执行的细粒度工作流。
 
+## Agent 流水线（推荐入口）
+
+**多 Agent 编排请以 [`skills/bindsang-pipeline/`](skills/bindsang-pipeline/) 为主 Skill**（加载 `SKILL.md`）。主 Agent 按 Change（`changes/<id>/` 或 `openspec/changes/<id>/`）在 `.pipeline/` 下落盘，分派带 `pipeline-role` 的子 Agent；阶段能力已合并原 `skills/sdd-*` 与各 `agents/role-*.md` 中的模式。
+
+| 你想做的事 | 使用 |
+|---|---|
+| 新功能 / 大重构全流程 | bindsang → `full-flow`（见 `pipelines/full-flow.md`） |
+| 只设计 + 审核 | `design-review` |
+| 已有 Spec，实施 + 验证 | `implement-verify` |
+| 需求变更 | `requirement-change` |
+| 外部 BUG | `bug-feedback` |
+| 单点探索 / 只派一个角色 | bindsang 单点派发（见 `references/orchestrator-protocol.md`） |
+
+**已弃用（勿新建）**
+
+| 旧入口 | 替代 |
+|---|---|
+| [`skills/dev-pipeline/`](skills/dev-pipeline/) | **bindsang-pipeline**（编排协议、并发、检查点已迁入；任务目录由 Change 根 + `.pipeline/` 代替仓库根 `.pipeline/<date>/`） |
+| 单独调用 `/sdd-*` | 由主 Agent 按角色 **模式** 派发（见 `bindsang-pipeline/roles.md` 映射表）；下文 `/sdd-*` 仍作**阶段语义**参考 |
+
+| 原 dev-pipeline 流水线 | bindsang `pipelines/` |
+|---|---|
+| `dev` | `full-flow` |
+| `design-review` | `design-review` |
+| `impl-verify` | `implement-verify` |
+
+AGENTS.md 里若仍写 `dev-pipeline 并发数`，可改为在 Change 的 `brief.md` 中配置 `concurrency`（见 bindsang `orchestrator-protocol.md`）。
+
 ## 命令速查表
 
 | skills                               | 职责 | 一句话记忆                   | 改代码 | 是否改 OpenSpec |
 | ------------------------------------ | ---- | ---------------------------- | ------ | --------------- |
 | [`sdd-explore`](skills/sdd-explore/) | 探索 | **现在是什么？**             | ❌      | ❌               |
 | [`sdd-analyze`](skills/sdd-analyze/) | 分析 | **问题是什么？有哪些方案？** | ❌      | ❌               |
-| [`sdd-decide`](skills/decide)        | 决策 | **最终选什么？**             | ❌      | ✅/决策文档      |
-| [`sdd-spec`](skills/spec)            | 规范 | **系统应该是什么？**         | ❌      | ✅               |
-| [`sdd-plan`](skills/plan)            | 规化 | **怎么拆 Task？**            | ❌      | ✅               |
-| [`sdd-implement`](skills/implement)  | 实现 | **把 Task 做出来**           | ✅      | ❌               |
-| [`sdd-verify`](skills/verify)        | 验收 | **做出来的对不对？**         | 默认 ❌ | ❌               |
-| [`sdd-fix`](skills/fix)              | 修复 | **实现有问题怎么修？**       | ✅      | ❌               |
-| [`sdd-change`](skills/change)        | 变更 | **需求变了怎么办？**         | ❌      | ✅               |
+| [`sdd-decide`](skills/sdd-decide/)   | 决策 | **最终选什么？**             | ❌      | ✅/决策文档      |
+| [`sdd-spec`](skills/sdd-spec/)       | 规范 | **系统应该是什么？**         | ❌      | ✅               |
+| [`sdd-plan`](skills/sdd-plan/)       | 规化 | **怎么拆 Task？**            | ❌      | ✅               |
+| [`sdd-implement`](skills/sdd-implement/) | 实现 | **把 Task 做出来**       | ✅      | ❌               |
+| [`sdd-verify`](skills/sdd-verify/)   | 验收 | **做出来的对不对？**         | 默认 ❌ | ❌               |
+| [`sdd-fix`](skills/sdd-fix/)         | 修复 | **实现有问题怎么修？**       | ✅      | ❌               |
+| [`sdd-change`](skills/sdd-change/)   | 变更 | **需求变了怎么办？**         | ❌      | ✅               |
+
+> 上表 skill 正文已并入 **bindsang-pipeline** 角色契约；单独 `/sdd-*` 适合阅读阶段职责，**生产编排请走 bindsang-pipeline**。
 
 ## samples
 
