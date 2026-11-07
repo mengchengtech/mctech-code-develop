@@ -1,10 +1,28 @@
 # 角色定义
 
-| 角色 | Agent 文件 | 权限类 | 模式 | 独立于 | 产物 | 返回 |
+各角色详细契约（含由 `skills/sdd-*` 合并的工作步骤与模式）见 `agents/role-*.md`。委派时须指定**角色 + 模式**（若适用）及输入/输出路径。
+
+| 角色 | Agent 文件 | 权限类 | 模式（主 Agent 派发） | 独立于 | 产物 | 返回 |
 |---|---|---|---|---|---|---|
-| explorer | `agents/role-explorer.md` | 只读 | 可并行 | designer、reviewer、planner、executor、verifier | 探索记录、需求与影响分析 | 事实证据、影响面、未知项、分析结论 |
-| designer | `agents/role-designer.md` | 文档写入 | 串行主导 | explorer、reviewer、planner、executor、verifier | 设计 ADR、OpenSpec proposal/specs/design | 设计方案、备选方案、权衡、风险、未决项 |
-| reviewer | `agents/role-reviewer.md` | 只读 | 独立审核 | designer、executor | 审核 ADR | APPROVE / REVISE / REJECT / NEED_INFO 及证据 |
-| planner | `agents/role-planner.md` | 文档写入 | 串行主导 | explorer、designer、reviewer、executor、verifier | 实施计划 ADR、OpenSpec tasks | 任务图、依赖、批次、验收点、回滚点 |
-| executor | `agents/role-executor.md` | 代码写入（限定范围） | 按批次串行；批次间可并行评估 | reviewer、verifier | 代码差异、执行记录、测试代码 | 修改摘要、文件清单、命令、风险、阻塞 |
-| verifier | `agents/role-verifier.md` | 只读/验证命令 | 与 executor 串行交接 | executor、designer | 验证报告、测试证据 | PASS / FAIL / BLOCKED / SCOPE_CHANGE 及证据 |
+| explorer | `agents/role-explorer.md` | 只读 | `explore` / `analyze` / `bug-triage` / `change-impact` | designer、reviewer、planner、executor、verifier | 探索/分析/变更影响/BUG ADR | `COMPLETED` / `NEED_INPUT` / `BLOCKED` / `FAILED` |
+| designer | `agents/role-designer.md` | 文档写入 | `decide-record` / `spec` / `change-update` | explorer、reviewer、planner、executor、verifier | 决策与设计 ADR、OpenSpec | 同上 |
+| reviewer | `agents/role-reviewer.md` | 只读 | `design` / `decision` / `change` | designer、executor | 审核 ADR | `APPROVE` / `REVISE` / `REJECT` / `NEED_INFO` |
+| planner | `agents/role-planner.md` | 文档写入 | `plan` / `replan` | explorer、designer、reviewer、executor、verifier | 实施计划 ADR、`tasks.md` | 同 explorer 状态集 |
+| executor | `agents/role-executor.md` | 代码写入（限定范围） | `implement` / `fix` | reviewer、verifier | 代码差异、执行记录 | `COMPLETED` / `BLOCKED` / `FAILED` |
+| verifier | `agents/role-verifier.md` | 只读/验证命令 | `task` / `change` | executor、designer | 验证报告 | `PASS` / `FAIL` / `BLOCKED` / `SCOPE_CHANGE` |
+
+## SDD 能力映射（供迁移与派发参考）
+
+| 原 `sdd-*` | 角色 · 模式 |
+|---|---|
+| sdd-explore | explorer · `explore` |
+| sdd-analyze | explorer · `analyze` |
+| sdd-decide | designer · `decide-record`（批准来自主 Agent / 用户） |
+| sdd-spec | designer · `spec` |
+| sdd-plan | planner · `plan` |
+| sdd-implement | executor · `implement` |
+| sdd-fix | executor · `fix` |
+| sdd-verify | verifier · `task` / `change` |
+| sdd-change | explorer · `change-impact` → designer · `change-update` → planner · `replan` |
+
+独立 `/sdd-*` 调用宜逐步弃用；编排以 `bindsang-pipeline` 主 Skill + 上表模式为准。
