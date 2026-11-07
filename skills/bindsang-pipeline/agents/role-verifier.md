@@ -63,14 +63,70 @@ tools: Read, Grep, Glob, Bash, Write
   - Spec/需求/设计/架构类 → `SCOPE_CHANGE`（建议主 Agent 路由 change/decide/designer/explorer）
   - 全部通过或可接受风险 → `PASS`
 
+## 验证步骤
+
+1. **读输入**：`brief.md`（验收标准、验证命令、验证环境）、OpenSpec `specs/`、`tasks.md`、本轮及前轮 `.pipeline/execution/执行记录-*.md`、前轮验证 ADR（`change` 模式读全部相关执行记录）。
+2. **运行验证命令**：执行 `brief.md` 中的 lint / typecheck / test / build；记录退出状态与关键输出。
+3. **核对验收标准**：按 `brief.md` 或 `design.md` 测试计划的**手段**逐条验证（`命令` / `HTTP` / `浏览器` / `人工`）；证据路径可写在 `.pipeline/verification/evidence/`。
+4. **Spec 与行为**：对照 Given-When-Then；写入「Spec 覆盖」或并入验收标准表。
+5. **范围核对**（git 仓库）：`git status` / `git diff --stat` 对照 `baseline.md` 与改动清单；规则见上文§规则「范围核对」。
+6. **测试质量**：新增测试须断言行为，非仅「不抛错」。
+7. **上轮核对**（rN>1）：对上轮失败项逐条给「已解决 / 仍存在」后再执行 2–6。
+
+## 判定
+
+ADR **首行** `VERDICT: PASS | FAIL`；返回主 Agent 的总评按下表映射。
+
+| 条件 | `VERDICT` | 返回 |
+|---|---|---|
+| 命令全过；无失败项；`UNVERIFIED` 仅人工项或 `brief.md` 环境豁免；范围合格 | `PASS` | `PASS` |
+| 实现类 FAIL，可交 executor | `FAIL` | `FAIL` |
+| 环境阻塞且未豁免 | `FAIL` + 环境阻塞节 | `BLOCKED` |
+| SPEC/DESIGN/ARCHITECTURE/NEW_REQUIREMENT | `FAIL`/`RISK` | `SCOPE_CHANGE` |
+
 ## 输出文件结构
 
-`.pipeline/verification/ADR-验证报告-rN.md`
+写入 `.pipeline/verification/ADR-验证报告-rN.md`。模板：
 
-- Summary（PASS/FAIL/RISK/NOT_VERIFIED 计数）
-- FAIL 项：ID、Severity、Classification、Spec、Task、Location、Problem、Impact、Recommended Action
-- RISK、NOT_VERIFIED、DEFERRED、OUT OF SCOPE
-- **Required Actions** 与 **NEXT_ACTION**（供主 Agent 路由）：
+```markdown
+VERDICT: PASS | FAIL
+
+## Summary
+PASS: n | FAIL: n | RISK: n | NOT_VERIFIED: n | 环境阻塞: n
+
+## 上轮问题核对（第 2 轮起）
+
+## 命令结果
+| 命令 | 退出状态 | 关键输出（≤15 行） |
+
+## 验收标准核对
+| 标准 | 手段 | 证据 | 结果 |
+
+## Spec 覆盖
+| 场景 | 证据 | 结果 |
+
+## 范围核对
+（基线排除 / 验证产物 / 无法区分 / 设计外改动）
+
+## 测试质量问题
+
+## 需人工检查
+
+## 环境阻塞
+
+## 失败项（不含环境阻塞）
+（ID、Severity、Classification、Spec、Task、Location、Problem、Impact、Recommended Action）
+
+## RISK
+## NOT_VERIFIED
+## DEFERRED
+## OUT OF SCOPE
+
+## Required Actions
+## NEXT_ACTION
+```
+
+### Classification → NEXT_ACTION
 
 | Classification | 建议下一步 |
 |---|---|
@@ -82,10 +138,10 @@ tools: Read, Grep, Glob, Bash, Write
 
 ## 完成判据
 
-每条验收标准有验证结果或明确豁免；结论、证据、分类与 NEXT_ACTION 完整。
+验收与 Spec 表完整；命令与范围核对已填；失败项含分类与 `NEXT_ACTION`；`VERDICT` 与返回总评一致。
 
-## 返回
+## 返回（≤5 行）
 
-首行总评：**PASS** / **FAIL** / **BLOCKED** / **SCOPE_CHANGE** + 摘要与产物路径。
+`PASS` / `FAIL` / `BLOCKED` / `SCOPE_CHANGE` + 路径 + FAIL / UNVERIFIED / 需人工 / 环境阻塞数量。
 
-状态 `COMPLETED`（即使 FAIL/BLOCKED/SCOPE_CHANGE，也由主 Agent 决定回退）。
+状态 `COMPLETED`（由主 Agent 决定回退）。

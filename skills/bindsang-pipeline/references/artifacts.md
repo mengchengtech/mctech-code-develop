@@ -25,4 +25,6 @@ OpenSpec 映射：`proposal.md` 保存背景动机和范围；`specs/<capability
 
 ## Verdict 约定
 
-评审/验证 ADR **首行**写结论，便于主 Agent「读返回」：`APPROVE`/`REVISE`/…、`PASS`/`FAIL`/…；designer `recheck` 返回 `CONFIRM`/`MINOR`/`ISSUE`；executor 返回 `COMPLETED` 或 `BLOCKED(<类型>)`。
+评审/验证 ADR **首行**写结论，便于主 Agent「读返回」：`APPROVE`/`REVISE`/…；验证报告首行 `VERDICT: PASS|FAIL`（返回映射见 `role-verifier.md` §判定）。designer `recheck` 返回 `CONFIRM`/`MINOR`/`ISSUE`；executor 返回 `COMPLETED` 或 `BLOCKED(<类型>)`。
+
+验证报告正文结构（命令结果、验收标准表、范围核对、`evidence/`）以 `agents/role-verifier.md` 为准。
