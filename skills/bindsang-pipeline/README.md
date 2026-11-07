@@ -1,6 +1,6 @@
 # bindsang-pipeline（Agent + Subagent 开发流水线）
 
-仓库 **推荐的多 Agent 编排入口**（根 [`README.md`](../../README.md)）。替代已弃用的 `skills/dev-pipeline`；`skills/sdd-*` 阶段逻辑已合并至 `agents/role-*.md`。
+仓库 **推荐的多 Agent 编排入口**（根 [`README.md`](../../README.md)）。替代已弃用的 `skills/dev-pipeline`（旧版整包归档在旁目录，仅供对照，勿加载其 Skill）；`skills/sdd-*` 阶段逻辑已合并至 `agents/role-*.md`。
 
 - `SKILL.md`：主入口、触发条件、任务分类、复杂度裁剪、自定义角色组合和调度规则。
 - `roles.md`：角色索引表，仅保留角色、Agent 文件、权限类、模式、独立性、产物和返回值。
