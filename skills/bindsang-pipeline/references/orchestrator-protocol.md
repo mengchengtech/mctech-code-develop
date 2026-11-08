@@ -25,7 +25,7 @@
 `decisions-log.md` **仅**在以下时机追加：用户新约束或裁决；检查点修订/手改要点；用户对未解问题/角色选择的答复；executor `BLOCKED` 回设计时记明的类型与事实。  
 不记录过程、推测、子 Agent 意见。
 
-开关写入 `brief.md`；用户说「并发 N」「自动/设计后暂停」等 → 更新 `brief.md`，下一检查点生效。
+开关写入 `brief.md`；用户说「并发 N」「自动/设计后暂停」「分步提交」等 → 更新 `brief.md`（`commit_policy: checkpoint`），下一检查点生效。
 
 ## 派发块
 
@@ -44,11 +44,12 @@
 
 1. **独立性**：`roles.md`「独立于」角色之间只传路径，不传被独立方推理或自检结论。  
 2. **写入**：角色只写己方产物；仅 executor 可改业务源码。并发实例不写同一文件；调度者不合并产物。  
-3. **git / 依赖**：角色不得 `commit/push/stash/checkout/reset/clean`（任务明确 authorize commit 时仅 executor 可 commit）。不得安装依赖。  
+3. **git / 依赖**：角色不得擅自 `commit/push/stash/checkout/reset/clean`。**提交分工**（详见 `git-checkpoints.md`）：主 Agent 在检查点提交 OpenSpec / `.pipeline/` / `tasks.md`；executor 在用户授权且 `commit_policy≠off` 时提交业务源码（典型：每 Task `COMPLETED`、fix 且 verifier `PASS`）。子 Agent 返回 `COMPLETED`/`APPROVE`/`PASS` 后，主 Agent 在进入下一派发前评估是否触发检查点 commit。不得安装依赖。  
 4. **不嵌套**：子 Agent 不得再派子 Agent。  
 5. **读返回**：以角色「返回」为准；产物有首行 verdict 时**先看首行**。仅当：`FAIL`（失败项/环境阻塞）、`BLOCKED`、`NEED_INPUT`、未解问题数>0、reviewer `REVISE`/`NEED_INFO`、检查点需要摘要时，读产物对应节。  
-6. **失败**：返回不合规 → 重派一次并指出问题；仍失败 → 汇报用户。限流/过载：并发数减半（最低 1）记入 `brief.md`，重派并告知。  
-7. **提问合并**：对用户的阻塞问题合并为一次提问。
+6. **检查点提交**：`brief.commit_policy=checkpoint` 且用户已授权 commit 时，子 Agent 终态返回后、**下一派发前**按 `git-checkpoints.md` 判断是否 commit：文档类由主 Agent；源码 Task/fix 由 executor。更新 `pipeline-state.last_checkpoint_commit` 与 `run.log`。  
+7. **失败**：返回不合规 → 重派一次并指出问题；仍失败 → 汇报用户。限流/过载：并发数减半（最低 1）记入 `brief.md`，重派并告知。  
+8. **提问合并**：对用户的阻塞问题合并为一次提问。
 
 ## 并发
 

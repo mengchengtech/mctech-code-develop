@@ -10,7 +10,7 @@
 |---|---|
 | **项目 Skill 路径** | 确保仓库存在 `skills/bindsang-pipeline/SKILL.md`（本仓库已具备）。在 Cursor 设置中将该目录（或整个 `skills/`）加入 **Project Rules / Skills** 扫描路径（与团队 `AGENTS.md` 约定一致）。 |
 | **对话中显式加载** | 在新会话第一条消息中 `@` 引用 [`SKILL.md`](SKILL.md)，或说明「按 bindsang-pipeline 编排」。 |
-| **子 Agent（可选）** | 在支持自定义 Subagent 的环境中，按 [`roles.md`](roles.md)「Subagent 注册」表注册六个 agent：`role-explorer`、`role-designer`、`role-reviewer`、`role-planner`、`role-executor`、`role-verifier`（源文件在 `agents/role-*.md`）。未注册时，主 Agent 可用 **generalPurpose + 必读角色文件路径** 模拟，协议不变。 |
+| **子 Agent** | 本仓库已在 [`.cursor/agents/role-*.md`](../../.cursor/agents/) 注册六个角色（与 [`roles.md`](roles.md) 表一致）。主 Agent 派发时引用 `name`（如 `role-explorer`）及 `pipeline-role`；完整契约见 `skills/bindsang-pipeline/agents/role-*.md`。未启用 Subagent 时可用 **generalPurpose + 必读角色文件路径** 模拟，协议不变。 |
 | **无多 Agent 环境** | 主 Agent 按 `agents/role-*.md` 与 `pipelines/<id>.md` **分阶段顺序执行**，仍须落盘 `.pipeline/` 与 OpenSpec，遵守相同门禁。 |
 
 ---
@@ -193,15 +193,18 @@ Change 根：<绝对或仓库相对路径>
 
 并发实施时增加：**步骤编号、文件白名单**、输出 `执行记录-<组>.md`（见 `implement-verify.md`）。
 
-### 4.4 在 Cursor 中注册子 Agent（可选）
+### 4.4 在 Cursor 中使用子 Agent
 
-将 `agents/role-*.md` 注册为 Subagent 时，frontmatter 已含：
+项目已提供 [`.cursor/agents/role-*.md`](../../.cursor/agents/)（`name` + `pipeline-role` + 委派用 `description`）。测试示例：
 
-- `name`: 如 `role-explorer`
-- `pipeline-role`: `explorer` | `designer` | …
-- `tools`: 须与 `roles.md` 权限类一致（executor 需可改源码；reviewer 只读）
+```text
+使用 role-explorer 子 Agent：Change 根 changes/demo/，模式 explore，
+输入 .pipeline/brief.md，输出 .pipeline/exploration/ADR-探索记录.md
+```
 
-主 Agent 解析顺序：`AGENTS.md` 指定 → `pipeline-role` → 已注册 subagent → generalPurpose + 角色文件路径。
+主 Agent 解析顺序：`AGENTS.md` 指定 → `pipeline-role` / `name` → `.cursor/agents/` → generalPurpose + `agents/role-*.md` 路径。
+
+同步更新契约时：先改 `skills/bindsang-pipeline/agents/role-*.md`，再对齐 `.cursor/agents/` 中的摘要与 `description`（orchestrator-protocol「副本校验」）。
 
 ---
 
@@ -386,7 +389,8 @@ Change 根：<绝对或仓库相对路径>
 | 已手改 | 以仓库现稿为准，要点进 decisions-log |
 | 不是 BUG，是需求变更 | 切换 `requirement-change` |
 | 环境豁免 | verifier 环境阻塞时记入 decisions-log，标注 UNVERIFIED 项 |
-| 不要 commit / 可以 commit | 默认不 commit；仅用户授权后 executor 可 commit |
+| 分步提交 / 每步 commit | `brief.commit_policy = checkpoint`（须已授权 commit）；检查点见 [`git-checkpoints.md`](references/git-checkpoints.md) |
+| 不要 commit / 可以 commit | 默认 `commit_policy=off`；授权后由主 Agent（文档）与 executor（源码）按检查点提交 |
 
 ---
 
@@ -411,5 +415,21 @@ Change 根：<绝对或仓库相对路径>
 | [`pipelines/`](pipelines/) | 五条流水线阶段表与预算 |
 | [`references/orchestrator-protocol.md`](references/orchestrator-protocol.md) | 派发、并发、恢复、选用 |
 | [`references/artifacts.md`](references/artifacts.md) | 目录与 ADR/OpenSpec 分工 |
+| [`references/git-checkpoints.md`](references/git-checkpoints.md) | 何时 commit、谁提交、消息格式 |
+
+### 阶段性提交（摘要）
+
+启用：用户说「可以 commit」+「分步提交」→ 主 Agent 写 `commit_policy: checkpoint`。
+
+| 时机 | 谁 commit | 典型内容 |
+|---|---|---|
+| 每个子 Agent 派发终态（`COMPLETED` / `APPROVE` 等） | 主 Agent | 当次 ADR、OpenSpec、`tasks.md`（C1–C7） |
+| 每个 Task `COMPLETED` | executor | 该 Task 源码与测试（C8） |
+| 该 Task verifier `PASS` | executor 或主 Agent | 实现 + 验证 ADR（C9） |
+| 并行组 + `integrate` 完成 | executor | 整组改动（C10） |
+| 人工确认门 / planner / 变更影响批准 | 主 Agent | 里程碑文档（C4–C6、C12） |
+| Change 结束 | 主 Agent | state 收尾（C15） |
+
+不宜提交：REVISE/FAIL 半成品、并发组中间态。详见 [`git-checkpoints.md`](references/git-checkpoints.md)。
 
 仓库总览入口：根目录 [`README.md`](../../README.md)「Agent 流水线」一节。

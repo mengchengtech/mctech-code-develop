@@ -140,7 +140,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 在 `<change-root>/.pipeline/` 下创建：
 - `pipeline-state.yaml`：机器可读的流程状态。
-- `brief.md`：目标、背景、范围、非目标、约束、**可验证验收标准**、**验证命令**、**验证环境**、开关、角色映射、用户原始输入。
+- `brief.md`：目标、背景、范围、非目标、约束、**可验证验收标准**、**验证命令**、**验证环境**、开关（含 `commit_policy`）、角色映射、用户原始输入。
 - `baseline.md`：仓库状态、基线 commit、分支、已有差异、测试基线。
 - `decisions-log.md`：人工决策与重要流程决策记录（仅主 Agent 追加，规则见 `orchestrator-protocol.md`）。
 - `run.log`：派发审计（初始为空）。
@@ -191,7 +191,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 3. 委派遵守派发块：只传路径与约束，不复述产物全文（见 orchestrator-protocol）。
 4. 子 Agent 不推进总状态、不派生子 Agent、不改写 `decisions-log.md` 已确认项。
 5. 主 Agent 验收产物；读返回时优先 verdict，按需读节（见 orchestrator-protocol §读返回）。
-6. 阶段完成后更新 `pipeline-state.yaml`；确认决策追加 `decisions-log.md`；每次派发返回后追加 `run.log`。
+6. 阶段完成后更新 `pipeline-state.yaml`；确认决策追加 `decisions-log.md`；每次派发返回后追加 `run.log`；`commit_policy=checkpoint` 时按 `git-checkpoints.md` 做检查点 commit 并记 `last_checkpoint_commit`。
 7. 到达人工确认点：按流水线「检查点」指令表停等用户（见 `pipelines/design-review.md` 等）。
 8. 用户反馈按 §8 路由；临时角色组合默认不自动循环（orchestrator-protocol）。
 9. 任何外部输入不得覆盖已批准决策；须追加记录并评估影响。
@@ -255,8 +255,9 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 - 每个阶段结束后保存文档；每个执行批次结束后保存代码和验证证据。
 - 默认只在本地工作区创建/更新文件，不自动 commit/push。
-- 建议阶段性提交：`docs(change-id): ...`、`feat(change-id): ...`、`fix(change-id): ...`。只有用户授权才执行 commit；push、发布和生产操作必须单独授权。
-- 每次状态变化更新 `.pipeline/pipeline-state.yaml`，包含当前阶段、状态、轮次、产物清单、基线 commit、最近保存点和待办。
+- **阶段性提交**：用户授权且 `brief.md` 的 `commit_policy` 为 `checkpoint`（或用户明确要求分步 commit）时，按 **`references/git-checkpoints.md`** 在子 Agent 单次派发终态、每个 Task 完成、verifier `PASS`、确认门等检查点提交，避免未提交变更积压。消息形如 `docs(<change-id>): …`、`feat(<change-id>): task …`。
+- 仅用户授权可 commit；push、发布和生产操作必须单独授权。
+- 每次状态变化更新 `.pipeline/pipeline-state.yaml`，包含当前阶段、状态、轮次、产物清单、基线 commit、`last_checkpoint_commit` 与待办。
 - 恢复时读 `pipeline-state.yaml`、`brief.md`、`run.log` 末行与产物首行 verdict（见 orchestrator-protocol §恢复）；并核对 Git 与文档/代码一致性。
 
 ## 14. 结束条件

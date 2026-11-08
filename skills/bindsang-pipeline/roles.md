@@ -4,14 +4,16 @@
 
 ## Subagent 注册
 
-| 角色 | agent 文件 | `name` | `pipeline-role` | 权限类 |
-|---|---|---|---|---|
-| explorer | `role-explorer.md` | `role-explorer` | `explorer` | 只读 |
-| designer | `role-designer.md` | `role-designer` | `designer` | 文档写入 |
-| reviewer | `role-reviewer.md` | `role-reviewer` | `reviewer` | 只读 |
-| planner | `role-planner.md` | `role-planner` | `planner` | 文档写入 |
-| executor | `role-executor.md` | `role-executor` | `executor` | 改源码 |
-| verifier | `role-verifier.md` | `role-verifier` | `verifier` | 只读/验证命令 |
+仓库已在 **`.cursor/agents/role-*.md`** 注册与下列契约对齐的 Cursor 子 Agent（`name` / `pipeline-role` 与表一致）；正文精简，完整规则仍以 `agents/role-*.md` 为准。
+
+| 角色 | 契约文件 | Cursor 注册 | `name` | `pipeline-role` | 权限类 |
+|---|---|---|---|---|---|
+| explorer | `agents/role-explorer.md` | `.cursor/agents/role-explorer.md` | `role-explorer` | `explorer` | 只读 |
+| designer | `agents/role-designer.md` | `.cursor/agents/role-designer.md` | `role-designer` | `designer` | 文档写入 |
+| reviewer | `agents/role-reviewer.md` | `.cursor/agents/role-reviewer.md` | `role-reviewer` | `reviewer` | 只读 |
+| planner | `agents/role-planner.md` | `.cursor/agents/role-planner.md` | `role-planner` | `planner` | 文档写入 |
+| executor | `agents/role-executor.md` | `.cursor/agents/role-executor.md` | `role-executor` | `executor` | 改源码 |
+| verifier | `agents/role-verifier.md` | `.cursor/agents/role-verifier.md` | `role-verifier` | `verifier` | 只读/验证命令 |
 
 自定义 agent 的 `description` 建议含 `pipeline-role: <上表角色>`，以便主 Agent 按 `references/orchestrator-protocol.md` 解析。`tools` 须与权限类一致（改源码类必须有 Edit；只写产物类不得 Edit）。
 

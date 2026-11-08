@@ -33,6 +33,7 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 4. Test：单测/集成/API/E2E（按项目实际）。
 5. Validate：单测、集成、类型检查、Lint、Build（**不为通过测试改需求**）。
 6. 在 `tasks.md` 或执行记录中标记 Task 完成状态（按项目约定）。
+7. 若 `brief.md` 的 `commit_policy=checkpoint` 且用户已授权 commit：Task `COMPLETED` 后按 `references/git-checkpoints.md` **C8** 提交该 Task 范围内改动；同 Task verifier `PASS` 后 **C9/C7**（勿积压多 Task 再一次提交）。
 
 ### `fix`
 

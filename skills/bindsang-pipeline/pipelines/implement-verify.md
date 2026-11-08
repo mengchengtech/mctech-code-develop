@@ -34,6 +34,7 @@
 
 ## 循环与预算
 
+- **Git 检查点**：`commit_policy=checkpoint` 时，每 Task `COMPLETED` → commit（C8）；该 Task verifier `PASS` → commit 验证里程碑（C9/C7）。并行组在 `integrate` 完成后 commit（C10）。见 `references/git-checkpoints.md`。
 - **实施-验证循环**：`FAIL` 且分类为实现类（见 verifier 表）→ executor `fix` → verifier。最多 **3 轮**；耗尽 → 停。  
 - **环境阻塞**：verifier 报告环境阻塞 → 不派 fix；问用户：解除后重验 / **环境豁免**（`decisions-log.md` + `brief.md` 标注）/ 终止。  
 - **实施受阻**（executor `BLOCKED`）：
