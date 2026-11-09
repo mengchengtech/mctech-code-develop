@@ -17,7 +17,7 @@ OpenSpec 映射：`proposal.md` 保存背景动机和范围；`specs/<capability
 
 ## 编排记录（`.pipeline/` 根下）
 
-- `brief.md`：目标、约束、验收标准、验证命令、验证环境、开关、角色映射。
+- `brief.md`：目标、约束、验收标准、验证命令、验证环境、开关、角色映射、`role_models`（可选，用户显式指定角色→模型时）。
 - `decisions-log.md`：仅主 Agent 追加的已确认决策。
 - `run.log`：派发审计一行一条。
 - `.pipeline/review/人工意见-K.md`：用户检查点修订原文（首行可 `VERDICT: REVISE`）。

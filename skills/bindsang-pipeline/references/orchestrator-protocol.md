@@ -17,7 +17,7 @@
 
 | 文件 | 写者 | 用途 |
 |---|---|---|
-| `brief.md` | 主 Agent | 目标、约束、**可验证验收标准**、验证命令、验证环境、基线、开关（并发数等）、角色映射、`task_type` |
+| `brief.md` | 主 Agent | 目标、约束、**可验证验收标准**、验证命令、验证环境、基线、开关（并发数等）、角色映射、`role_models`（仅用户显式指定时）、`task_type` |
 | `decisions-log.md` | 仅主 Agent | 已确认决策，**仅追加**一行：`- [阶段/轮次] 决定 — 原因`；取代旧决定时新行注明「取代 …」 |
 | `run.log` | 仅主 Agent | 派发审计：`<序号> <流水线:阶段\|单点\|临时> <角色>/<模式> → <输出> \| <返回>` |
 | `pipeline-state.yaml` | 仅主 Agent | 机器可读状态（见 `state-machine.md`） |
@@ -25,7 +25,7 @@
 `decisions-log.md` **仅**在以下时机追加：用户新约束或裁决；检查点修订/手改要点；用户对未解问题/角色选择的答复；executor `BLOCKED` 回设计时记明的类型与事实。  
 不记录过程、推测、子 Agent 意见。
 
-开关写入 `brief.md`；用户说「并发 N」「自动/设计后暂停」「分步提交」等 → 更新 `brief.md`（`commit_policy: checkpoint`），下一检查点生效。
+开关写入 `brief.md`；用户说「并发 N」「自动/设计后暂停」「分步提交」等 → 更新 `brief.md`（`commit_policy: checkpoint`），下一检查点生效。用户显式指定某角色用某模型（如「explorer 用 composer-2.5-fast」）→ 写入 `brief.md` 的 `role_models`（如 `explorer: composer-2.5-fast`），仅覆盖所列角色。
 
 ## 派发块
 
@@ -38,6 +38,8 @@
 - 轮次；并发时：步骤编号、文件白名单  
 - 追加约束（可选，**只收紧**角色规则）
 
+**不传**：`model`（或环境的等效「本次调用模型」参数）。默认使用已注册子 Agent 定义中的模型（见 `roles.md`「Subagent 注册」）；仅当用户在本次 Change 输入或 `brief.md` 的 `role_models` 中为该 `pipeline-role` 显式指定模型时，当次派发才可传入对应 `model`。
+
 子 Agent 须先读 `decisions-log.md`：视为约束，不得推翻；冲突时在产物中指出，不写该文件。
 
 ## 硬约束
@@ -46,6 +48,7 @@
 2. **写入**：角色只写己方产物；仅 executor 可改业务源码。并发实例不写同一文件；调度者不合并产物。  
 3. **git / 依赖**：角色不得擅自 `commit/push/stash/checkout/reset/clean`。**提交分工**（详见 `git-checkpoints.md`）：主 Agent 在检查点提交 OpenSpec / `.pipeline/` / `tasks.md`；executor 在用户授权且 `commit_policy≠off` 时提交业务源码（典型：每 Task `COMPLETED`、fix 且 verifier `PASS`）。子 Agent 返回 `COMPLETED`/`APPROVE`/`PASS` 后，主 Agent 在进入下一派发前评估是否触发检查点 commit。不得安装依赖。  
 4. **不嵌套**：子 Agent 不得再派子 Agent。  
+4b. **模型**：主 Agent **不得**为「提速/省钱/复杂度」自行挑选或更换子 Agent 模型；不得在无用户授权时在派发参数中写 `model`。例外：`brief.md` 的 `role_models` 或用户当轮指令中的显式映射。  
 5. **读返回**：以角色「返回」为准；产物有首行 verdict 时**先看首行**。仅当：`FAIL`（失败项/环境阻塞）、`BLOCKED`、`NEED_INPUT`、未解问题数>0、reviewer `REVISE`/`NEED_INFO`、检查点需要摘要时，读产物对应节。  
 6. **检查点提交**：`brief.commit_policy=checkpoint` 且用户已授权 commit 时，子 Agent 终态返回后、**下一派发前**按 `git-checkpoints.md` 判断是否 commit：文档类由主 Agent；源码 Task/fix 由 executor。更新 `pipeline-state.last_checkpoint_commit` 与 `run.log`。  
 7. **失败**：返回不合规 → 重派一次并指出问题；仍失败 → 汇报用户。限流/过载：并发数减半（最低 1）记入 `brief.md`，重派并告知。  
@@ -69,6 +72,8 @@
 2. `description` 或 frontmatter 含 `pipeline-role: <角色名>`（见 `roles.md`「Subagent 注册」）  
 3. `roles.md` 登记之 `agents/role-*.md` 已注册为 subagent（`name` 字段与表内一致）  
 4. 兜底：generalPurpose + 必读 `<skill>/agents/role-*.md` 绝对路径  
+
+**模型**（与上表独立）：派发时不默认传 `model`。解析顺序：`brief.role_models[<pipeline-role>]` 或用户当轮显式指定 → 已注册子 Agent 文件（如 `.cursor/agents/role-*.md`）中的 `model` → 环境默认。主 Agent 不在此链条中插入自选模型。
 
 副本校验：若环境存在同名 agent 定义，与本 skill `agents/` 源文件 diff——仅 frontmatter 差异可忽略；正文不一致则停，提示用户用源文件更新注册副本。
 

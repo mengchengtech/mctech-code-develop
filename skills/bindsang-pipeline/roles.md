@@ -6,6 +6,8 @@
 
 仓库已在 **`.cursor/agents/role-*.md`** 注册与下列契约对齐的 Cursor 子 Agent（`name` / `pipeline-role` 与表一致）；正文精简，完整规则仍以 `agents/role-*.md` 为准。
 
+各角色默认使用的推理模型在 **`.cursor/agents/role-*.md`** frontmatter 的 `model`（或环境等价字段）中配置，随子 Agent **创建/注册时**设定。主 Agent 派发时只指定 `name`（或 `subagent_type`）与任务块（见 `references/orchestrator-protocol.md`「派发块」），**默认不在调用参数中传 `model`**。仅当用户在 prompt 或 Change 的 `brief.md` → `role_models` 中显式指定某 `pipeline-role` 使用某模型时，主 Agent 方可对该角色当次派发覆盖 `model`。
+
 | 角色 | 契约文件 | Cursor 注册 | `name` | `pipeline-role` | 权限类 |
 |---|---|---|---|---|---|
 | explorer | `agents/role-explorer.md` | `.cursor/agents/role-explorer.md` | `role-explorer` | `explorer` | 只读 |

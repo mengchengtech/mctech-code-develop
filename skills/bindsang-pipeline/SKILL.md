@@ -1,7 +1,7 @@
 ---
 name: bindsang-pipeline
 名称: bindsang-pipeline
-版本: 1.2.0
+版本: 1.2.1
 description: >
   编排子 Agent 完成 OpenSpec Change（探索→设计→审核→规划→实施→验证；含需求变更与外部 BUG）。
   使用：用户要求「流水线 / 子智能体 / 多 Agent」；跨模块功能、重构、公共接口变更；只要设计+评审；已有 Spec 要实施验证；
@@ -140,7 +140,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 在 `<change-root>/.pipeline/` 下创建：
 - `pipeline-state.yaml`：机器可读的流程状态。
-- `brief.md`：目标、背景、范围、非目标、约束、**可验证验收标准**、**验证命令**、**验证环境**、开关（含 `commit_policy`）、角色映射、用户原始输入。
+- `brief.md`：目标、背景、范围、非目标、约束、**可验证验收标准**、**验证命令**、**验证环境**、开关（含 `commit_policy`）、角色映射、`role_models`（可选）、用户原始输入。
 - `baseline.md`：仓库状态、基线 commit、分支、已有差异、测试基线。
 - `decisions-log.md`：人工决策与重要流程决策记录（仅主 Agent 追加，规则见 `orchestrator-protocol.md`）。
 - `run.log`：派发审计（初始为空）。
@@ -188,7 +188,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 1. 每个阶段开始前，读取当前状态与该阶段输入；确认前置产物存在。
 2. 根据 `roles.md` 选择角色与**模式**，读取 `agents/role-*.md`，并按 `pipelines/<task_type>.md` 执行阶段与预算。
-3. 委派遵守派发块：只传路径与约束，不复述产物全文（见 orchestrator-protocol）。
+3. 委派遵守派发块：只传路径与约束，不复述产物全文（见 orchestrator-protocol）；**默认不传 `model`**，沿用 `.cursor/agents/` 注册模型；仅 `brief.role_models` 或用户当轮显式指定时可覆盖。
 4. 子 Agent 不推进总状态、不派生子 Agent、不改写 `decisions-log.md` 已确认项。
 5. 主 Agent 验收产物；读返回时优先 verdict，按需读节（见 orchestrator-protocol §读返回）。
 6. 阶段完成后更新 `pipeline-state.yaml`；确认决策追加 `decisions-log.md`；每次派发返回后追加 `run.log`；`commit_policy=checkpoint` 时按 `git-checkpoints.md` 做检查点 commit 并记 `last_checkpoint_commit`。

@@ -10,7 +10,7 @@
 |---|---|
 | **项目 Skill 路径** | 确保仓库存在 `skills/bindsang-pipeline/SKILL.md`（本仓库已具备）。在 Cursor 设置中将该目录（或整个 `skills/`）加入 **Project Rules / Skills** 扫描路径（与团队 `AGENTS.md` 约定一致）。 |
 | **对话中显式加载** | 在新会话第一条消息中 `@` 引用 [`SKILL.md`](SKILL.md)，或说明「按 bindsang-pipeline 编排」。 |
-| **子 Agent** | 本仓库已在 [`.cursor/agents/role-*.md`](../../.cursor/agents/) 注册六个角色（与 [`roles.md`](roles.md) 表一致）。主 Agent 派发时引用 `name`（如 `role-explorer`）及 `pipeline-role`；完整契约见 `skills/bindsang-pipeline/agents/role-*.md`。未启用 Subagent 时可用 **generalPurpose + 必读角色文件路径** 模拟，协议不变。 |
+| **子 Agent** | 本仓库已在 [`.cursor/agents/role-*.md`](../../.cursor/agents/) 注册六个角色（与 [`roles.md`](roles.md) 表一致）。主 Agent 派发时引用 `name`（如 `role-explorer`）及 `pipeline-role`；**默认不在派发参数中指定 `model`**（模型在子 Agent 注册文件的 `model` 中配置）。仅用户显式要求某角色用某模型时，写入 `brief.role_models` 并在当次派发覆盖。完整契约见 `skills/bindsang-pipeline/agents/role-*.md`。未启用 Subagent 时可用 **generalPurpose + 必读角色文件路径** 模拟，协议不变。 |
 | **无多 Agent 环境** | 主 Agent 按 `agents/role-*.md` 与 `pipelines/<id>.md` **分阶段顺序执行**，仍须落盘 `.pipeline/` 与 OpenSpec，遵守相同门禁。 |
 
 ---
@@ -204,7 +204,9 @@ Change 根：<绝对或仓库相对路径>
 
 主 Agent 解析顺序：`AGENTS.md` 指定 → `pipeline-role` / `name` → `.cursor/agents/` → generalPurpose + `agents/role-*.md` 路径。
 
-同步更新契约时：先改 `skills/bindsang-pipeline/agents/role-*.md`，再对齐 `.cursor/agents/` 中的摘要与 `description`（orchestrator-protocol「副本校验」）。
+**模型**：调整各角色默认模型 → 改 `.cursor/agents/role-*.md` 的 `model`，而非在派发 prompt 里写模型名。临时按角色换模型（用户口头指定）→ 主 Agent 记入 `brief.role_models` 后仅对该角色传入 `model`。
+
+同步更新契约时：先改 `skills/bindsang-pipeline/agents/role-*.md`，再对齐 `.cursor/agents/` 中的摘要、`description` 与 `model`（orchestrator-protocol「副本校验」）。
 
 ---
 
@@ -225,6 +227,7 @@ Change 根：<绝对或仓库相对路径>
 | `pause_after_design` | off | 设计后暂停 | 强制确认门 |
 | `design_recheck` | off | 设计者复核 | APPROVE 后 designer `recheck` |
 | `concurrency` | 3 | 并发 N | 探索/实施并发上限 |
+| `role_models` | （空） | 「explorer 用 composer-2.5-fast」等按角色指定模型 | 仅所列角色当次派发覆盖 `model`；未列出角色仍用 `.cursor/agents/` 注册默认 |
 
 **设计确认门指令**（与 design-review 相同，见下表 §5.2）。
 
