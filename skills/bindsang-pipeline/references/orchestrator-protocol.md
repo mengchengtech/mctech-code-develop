@@ -25,7 +25,7 @@
 `decisions-log.md` **仅**在以下时机追加：用户新约束或裁决；检查点修订/手改要点；用户对未解问题/角色选择的答复；executor `BLOCKED` 回设计时记明的类型与事实。  
 不记录过程、推测、子 Agent 意见。
 
-开关写入 `brief.md`；用户说「并发 N」「自动/设计后暂停」「分步提交」等 → 更新 `brief.md`（`commit_policy: checkpoint`），下一检查点生效。用户显式指定某角色用某模型（如「explorer 用 composer-2.5-fast」）→ 写入 `brief.md` 的 `role_models`（如 `explorer: composer-2.5-fast`），仅覆盖所列角色。
+开关写入 `brief.md`；新建 `brief.md` 默认 `commit_policy: checkpoint`（省略时视同 `checkpoint`）。用户说「不要 commit / 仅落盘」→ `commit_policy: off`；说「并发 N」「自动/设计后暂停」等 → 更新对应开关，下一检查点生效。用户显式指定某角色用某模型（如「explorer 用 composer-2.5-fast」）→ 写入 `brief.md` 的 `role_models`（如 `explorer: composer-2.5-fast`），仅覆盖所列角色。
 
 ## 派发块
 
@@ -50,7 +50,7 @@
 4. **不嵌套**：子 Agent 不得再派子 Agent。  
 4b. **模型**：主 Agent **不得**为「提速/省钱/复杂度」自行挑选或更换子 Agent 模型；不得在无用户授权时在派发参数中写 `model`。例外：`brief.md` 的 `role_models` 或用户当轮指令中的显式映射。  
 5. **读返回**：以角色「返回」为准；产物有首行 verdict 时**先看首行**。仅当：`FAIL`（失败项/环境阻塞）、`BLOCKED`、`NEED_INPUT`、未解问题数>0、reviewer `REVISE`/`NEED_INFO`、检查点需要摘要时，读产物对应节。  
-6. **检查点提交**：`brief.commit_policy=checkpoint` 且用户已授权 commit 时，子 Agent 终态返回后、**下一派发前**按 `git-checkpoints.md` 判断是否 commit：文档类由主 Agent；源码 Task/fix 由 executor。更新 `pipeline-state.last_checkpoint_commit` 与 `run.log`。  
+6. **检查点提交**：`brief.commit_policy` 为 `checkpoint`（或未写明，默认 `checkpoint`）且用户已授权 commit 时，子 Agent 终态返回后、**下一派发前**按 `git-checkpoints.md` 判断是否 commit：文档类由主 Agent；源码 Task/fix 由 executor。更新 `pipeline-state.last_checkpoint_commit` 与 `run.log`。  
 7. **失败**：返回不合规 → 重派一次并指出问题；仍失败 → 汇报用户。限流/过载：并发数减半（最低 1）记入 `brief.md`，重派并告知。  
 8. **提问合并**：对用户的阻塞问题合并为一次提问。
 

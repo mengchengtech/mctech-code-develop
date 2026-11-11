@@ -1,13 +1,13 @@
 # Git 阶段性提交（检查点）
 
-避免单次 Change 积攒过多未提交变更；每个检查点应是**可回滚、可审查的阶段性成果**。默认仍**不自动 push**；`commit` 须用户授权（或在 `brief.md` 写明 `commit_policy` 且用户已说「分步提交 / 每步 commit」）。
+避免单次 Change 积攒过多未提交变更；每个检查点应是**可回滚、可审查的阶段性成果**。默认仍**不自动 push**；`brief.md` 默认 `commit_policy: checkpoint`；`commit` 须用户授权后方可在检查点提交。
 
 ## 策略开关（`brief.md`）
 
 | `commit_policy` | 含义 |
 |---|---|
-| `off` | 不 commit（默认）；仅落盘文件 |
-| `checkpoint` | 按下表检查点提交（推荐；用户授权后启用） |
+| `off` | 不 commit；仅落盘文件 |
+| `checkpoint` | 按下表检查点提交（**默认**；用户授权 commit 后生效） |
 | `end_only` | 仅 Change 正常结束或用户点名时一次提交 |
 
 附带字段（主 Agent 维护）：

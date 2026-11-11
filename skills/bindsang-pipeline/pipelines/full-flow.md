@@ -47,7 +47,7 @@
 | pause_after_design | off | 设计后暂停 | 覆盖 auto，确认门必停 |
 | design_recheck | off | 设计者复核 | `APPROVE` 后 designer `recheck` 一步 |
 | concurrency | 3 | 并发 N | 见 orchestrator-protocol |
-| commit_policy | off | 分步提交 / 每步 commit | `checkpoint`；检查点见 `references/git-checkpoints.md` |
+| commit_policy | checkpoint | 不要 commit / 仅落盘 | `off`；分步提交见 `references/git-checkpoints.md`（默认已启用） |
 
 ## 结束
 

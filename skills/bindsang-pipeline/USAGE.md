@@ -227,6 +227,7 @@ Change 根：<绝对或仓库相对路径>
 | `pause_after_design` | off | 设计后暂停 | 强制确认门 |
 | `design_recheck` | off | 设计者复核 | APPROVE 后 designer `recheck` |
 | `concurrency` | 3 | 并发 N | 探索/实施并发上限 |
+| `commit_policy` | checkpoint | 不要 commit / 仅落盘 | `off`；检查点见 [`git-checkpoints.md`](references/git-checkpoints.md) |
 | `role_models` | （空） | 「explorer 用 composer-2.5-fast」等按角色指定模型 | 仅所列角色当次派发覆盖 `model`；未列出角色仍用 `.cursor/agents/` 注册默认 |
 
 **设计确认门指令**（与 design-review 相同，见下表 §5.2）。
@@ -392,8 +393,9 @@ Change 根：<绝对或仓库相对路径>
 | 已手改 | 以仓库现稿为准，要点进 decisions-log |
 | 不是 BUG，是需求变更 | 切换 `requirement-change` |
 | 环境豁免 | verifier 环境阻塞时记入 decisions-log，标注 UNVERIFIED 项 |
-| 分步提交 / 每步 commit | `brief.commit_policy = checkpoint`（须已授权 commit）；检查点见 [`git-checkpoints.md`](references/git-checkpoints.md) |
-| 不要 commit / 可以 commit | 默认 `commit_policy=off`；授权后由主 Agent（文档）与 executor（源码）按检查点提交 |
+| 可以 commit | 授权后按默认 `commit_policy=checkpoint` 在检查点提交；见 [`git-checkpoints.md`](references/git-checkpoints.md) |
+| 不要 commit / 仅落盘 | `brief.commit_policy = off` |
+| 分步提交 / 每步 commit | 与默认 `checkpoint` 相同（可显式写入 brief） |
 
 ---
 
@@ -422,7 +424,7 @@ Change 根：<绝对或仓库相对路径>
 
 ### 阶段性提交（摘要）
 
-启用：用户说「可以 commit」+「分步提交」→ 主 Agent 写 `commit_policy: checkpoint`。
+默认 `brief.md` 含 `commit_policy: checkpoint`。用户说「可以 commit」即按检查点提交；说「不要 commit」→ 主 Agent 写 `commit_policy: off`。
 
 | 时机 | 谁 commit | 典型内容 |
 |---|---|---|

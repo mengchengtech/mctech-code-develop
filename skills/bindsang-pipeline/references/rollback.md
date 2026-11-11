@@ -2,4 +2,4 @@
 
 流程回退是重新探索/分析/设计/审核/规划，不自动撤销代码；代码回滚是撤销某批代码/配置/迁移，必须明确目标基线和数据影响。前置准备记录 commit、分支和工作区差异；每个文档阶段在 `.pipeline/` 保存 ADR，在 Change 根保存 OpenSpec，并更新 `.pipeline/pipeline-state.yaml`；每个执行批次保存代码差异、`.pipeline/execution/` 执行记录和测试结果。
 
-默认只写本地工作区，不自动 commit/push。用户启用 `commit_policy=checkpoint` 时按 `git-checkpoints.md` 留保存点，回滚优先 `git revert` 到 `last_checkpoint_commit` 或针对性反向补丁；不得未经授权执行 `git reset --hard`、强制清理、生产回滚或数据删除。数据库和外部副作用必须有备份、补偿或人工处置方案。
+默认只写本地工作区，不自动 push。`brief.md` 默认 `commit_policy=checkpoint`；用户授权 commit 后按 `git-checkpoints.md` 留保存点。回滚优先 `git revert` 到 `last_checkpoint_commit` 或针对性反向补丁；不得未经授权执行 `git reset --hard`、强制清理、生产回滚或数据删除。数据库和外部副作用必须有备份、补偿或人工处置方案。
