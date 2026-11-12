@@ -36,7 +36,7 @@
 - 输入文件（含 `brief.md`、`decisions-log.md`）  
 - 输出文件  
 - 轮次；并发时：步骤编号、文件白名单  
-- 追加约束（可选，**只收紧**角色规则）
+- 追加约束（可选，**只收紧**角色规则）。派 **executor `implement`** 时无需重复勾选约定（已固化于 `agents/role-executor.md`）；仅在 Change 有额外勾选口径时再写追加约束。
 
 **不传**：`model`（或环境的等效「本次调用模型」参数）。默认使用已注册子 Agent 定义中的模型（见 `roles.md`「Subagent 注册」）；仅当用户在本次 Change 输入或 `brief.md` 的 `role_models` 中为该 `pipeline-role` 显式指定模型时，当次派发才可传入对应 `model`。
 

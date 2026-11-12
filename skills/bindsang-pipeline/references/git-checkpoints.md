@@ -61,7 +61,7 @@
 
 | ID | 时机 | 执行者 | 纳入变更（典型） |
 |---|---|---|---|
-| **C8** | executor 单 Task `COMPLETED` | executor | 该 Task 范围内源码/测试 + 对应 `执行记录` 中列出的文件 |
+| **C8** | executor 单 Task `COMPLETED` | executor | 该 Task 范围内源码/测试 + **`tasks.md` 本 Task 标题与已满足验收项勾选** + 对应 `执行记录` 中列出的文件 |
 | **C9** | 同上 Task 对应 verifier `PASS` | executor 或主 Agent | C8 之上可 `--amend` **仅当用户明确且 C8 尚未 push**；否则新增 `feat: task X verified`；并含验证 ADR（若主 Agent 提交） |
 | **C10** | 并行组全部 `COMPLETED` 且 `integrate` `COMPLETED` | executor | 整组+集成改动 + 各 `执行记录-<组>.md`、集成记录 |
 | **C11** | `fix` 派发 `COMPLETED` 且同轮 verifier `PASS` | executor | fix 改动 + 执行记录 fix 节 |

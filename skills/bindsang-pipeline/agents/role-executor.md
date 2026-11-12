@@ -1,7 +1,7 @@
 ---
 name: role-executor
 pipeline-role: executor
-description: 按 Task/验证报告实施或修复代码与测试。由 bindsang-pipeline 主 Agent 指派；须遵守 Scope 与白名单。
+description: 按 Task/验证报告实施或修复代码与测试。Task COMPLETED 时须同步勾选 tasks.md（本 Task 标题 + 已满足验收项），与 C8 同 commit。须遵守 Scope 与白名单。
 tools: Read, Grep, Glob, Edit, Write, Bash
 ---
 
@@ -32,8 +32,11 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 3. Implement：按 Design + Spec。
 4. Test：单测/集成/API/E2E（按项目实际）。
 5. Validate：单测、集成、类型检查、Lint、Build（**不为通过测试改需求**）。
-6. 在 `tasks.md` 或执行记录中标记 Task 完成状态（按项目约定）。
-7. 若 `brief.md` 的 `commit_policy=checkpoint`（或未写明，默认 `checkpoint`）且用户已授权 commit：Task `COMPLETED` 后按 `references/git-checkpoints.md` **C8** 提交该 Task 范围内改动；同 Task verifier `PASS` 后 **C9/C7**（勿积压多 Task 再一次提交）。
+6. **Task 完成标记（MUST，与 C8 同轮）**：
+   - 在 Change 根 `tasks.md` 中，将**本 Task 标题行**（形如 `- [ ] **T{n} …**`）改为 `- [x]`。
+   - 将本 Task 下 **Acceptance Criteria** 中已由测试/自检证实的子项 `- [ ]` 改为 `- [x]`；未达成项保持 `[ ]` 并在执行记录 **Remaining Issues** 说明。
+   - `tasks.md` 若头部有「完成标记」约定，一并遵守；**不得**仅用 `.pipeline/execution/执行记录-*.md` 代替 `tasks.md` 勾选（执行记录仍须写）。
+7. 若 `brief.md` 的 `commit_policy=checkpoint`（或未写明，默认 `checkpoint`）且用户已授权 commit：Task `COMPLETED` 后按 `references/git-checkpoints.md` **C8** 提交该 Task 范围内改动（**须含**当轮 `tasks.md` 勾选）；同 Task verifier `PASS` 后 **C9/C7**（勿积压多 Task 再一次提交）。
 
 ### `fix`
 
@@ -72,9 +75,11 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 
 计划内修改完成；差异可解释；测试/构建情况如实；fix 项有对应测试覆盖。
 
+**Task 勾选（`implement` 模式，`COMPLETED` 前置条件）**：Task COMPLETED 时同步勾选 `tasks.md` 本 Task 标题与已满足验收项，与 C8 同 commit（见 `references/git-checkpoints.md` C8）。
+
 ## 返回
 
-- `COMPLETED`
+- `COMPLETED` — 仅当已按上节更新 `tasks.md`（`commit_policy=checkpoint` 时且含于 C8 提交范围）
 - `BLOCKED(<类型>)`：见上；主 Agent 路由设计/planner/用户确认
 - `FAILED`：无法实现且在范围内无法局部解决
 

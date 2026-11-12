@@ -37,7 +37,7 @@ tools: Read, Grep, Glob, Bash, Write
 ## 输出文件结构
 
 - `.pipeline/planning/ADR-实施计划.md`：Task List、Dependencies、Spec Coverage、Parallelizable/Sequential Tasks、Risks、Verification Plan
-- Change 根：`tasks.md`（权威 Task 列表）
+- Change 根：`tasks.md`（权威 Task 列表；文首 **MUST** 含一条「完成标记」：executor 在 Task COMPLETED 时勾选本 Task 标题 `[x]` 与已满足 Acceptance Criteria，与 C8 同 commit）
 
 ## 完成判据
 
