@@ -17,10 +17,10 @@ OpenSpec 映射：`proposal.md` 保存背景动机和范围；`specs/<capability
 
 ## 编排记录（`.pipeline/` 根下）
 
-- `brief.md`：目标、约束、验收标准、验证命令、验证环境、开关、角色映射、`role_models`（可选，用户显式指定角色→模型时）。
+- `brief.md`：字段清单唯一载体 = `references/orchestrator-protocol.md`「任务记录」（含目标/约束/验收标准/验证命令/验证环境/开关/角色映射等全部字段与 `estimate`、`piece_acceptance`、`independence` 三新字段）。
 - `decisions-log.md`：仅主 Agent 追加的已确认决策。
 - `run.log`：派发审计一行一条。
-- `.pipeline/review/人工意见-K.md`：用户检查点修订原文（首行可 `VERDICT: REVISE`）。
+- `.pipeline/review/人工意见-K.md`：用户检查点修订意见**原文**，每条 `- [K-n] <用户原文>` 逐条编号、不改写、不合并（首行可 `VERDICT: REVISE`）；designer 对任一条标「不可行」时主 Agent 立即停下并附证据。
 - `.pipeline/verification/evidence/`：verifier 截图、trace、日志（可选）。
 
 ## Verdict 约定
