@@ -51,11 +51,11 @@
 
 ## 循环与预算
 
-- **影响分析**：最多 **2 轮** explorer（`change-impact` + 一次补查 `explore`）。  
-- **规范+审核**：同 `design-review.md`（`REVISE` 最多 **3 轮**；`revise`/`change-update` 交替）。  
-- **人工修订**：`.pipeline/review/人工意见-K.md`；不计入自动 3 轮。  
+- **影响分析**：轮数 = 记账键 `impacts k/上限`（`change-impact` + 一次补查 `explore`；默认上限与耗尽三项选择见 `references/orchestrator-protocol.md`「记账」）。  
+- **规范+审核**：同 `design-review.md`（`REVISE` 循环 = `revisions` 键，上限见「记账」；`revise`/`change-update` 交替）。  
+- **人工修订**：`.pipeline/review/人工意见-K.md`；不计入 `revisions` 自动循环额度。  
 - **实施-验证**：同 `implement-verify.md`；`SCOPE_CHANGE` 再次触发时 **重新从影响分析** 或停等用户（不得 executor 私自改 Spec）。  
-- 预算耗尽 → 停，汇报，不得放宽标准。
+- 预算耗尽 → 停，给三项选择（`references/orchestrator-protocol.md`「必须停下询问用户」），不得放宽标准。
 
 ## 检查点（影响确认 & 确认门）
 

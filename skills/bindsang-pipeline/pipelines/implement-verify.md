@@ -32,10 +32,12 @@
 
 另读 `decisions-log.md`。
 
+每轮执行记录必含：代码差异、测试命令与结果、未覆盖项、已知风险。
+
 ## 循环与预算
 
-- **Git 检查点**：`commit_policy=checkpoint`（默认，须用户授权 commit）时，每 Task `COMPLETED` → commit（C8）；该 Task verifier `PASS` → commit 验证里程碑（C9/C7）。并行组在 `integrate` 完成后 commit（C10）。见 `references/git-checkpoints.md`。
-- **实施-验证循环**：`FAIL` 且分类为实现类（见 verifier 表）→ executor `fix` → verifier。最多 **3 轮**；耗尽 → 停。  
+- **Git 检查点**：`commit_policy=checkpoint`（默认即授权：主 Agent 自动按检查点提交、不逐次询问提示，用户明示禁止才停）时，每 Task `COMPLETED` → commit（C8）；该 Task verifier `PASS` → commit 验证里程碑（C9/C7）。并行组在 `integrate` 完成后 commit（C10）。见 `references/git-checkpoints.md`。
+- **实施-验证循环**：`FAIL` 且分类为实现类（见 verifier 表）→ executor `fix` → verifier。轮数 = 记账键 `fixes <键> k/R`（键 = Task / 集成 / 整体，与验证报告后缀一致；默认上限与耗尽三项选择见 `references/orchestrator-protocol.md`「记账」）。  
 - **环境阻塞**：verifier 报告环境阻塞 → 不派 fix；问用户：解除后重验 / **环境豁免**（`decisions-log.md` + `brief.md` 标注）/ 终止。  
 - **实施受阻**（executor `BLOCKED`）：
 
@@ -58,6 +60,16 @@
 ## 检查点
 
 无固定检查点；适用「必须停下询问」+ 环境阻塞 + 破坏性 `需确认`。
+
+### 逐片验收（`brief.md` 开关 `piece_acceptance=on` 时生效）
+
+逐片（含并行组）验证 `PASS` 后停点，展示：片编号与行为判据（取自设计「实施步骤（片划分）」）、验收入口（≤3 行：该片验收标准与验证命令，详见该片验证报告「验收标准表」）、该片剩余修复轮。**停等用户**：
+
+| 用户指令 | 动作 |
+|---|---|
+| `继续` | 该片完成，解锁依赖它的片 |
+| `修复：<意见>` | 该片修复轮已达 `fixes` 上限时先提示耗尽并询问是否追加；否则意见原文按 `- [K-n] <用户原文>` 写入人工意见文件（首行 `VERDICT: FAIL`），派 executor `fix`（传片编号、文件白名单，读全部执行记录与人工意见文件）→ 再派该片验证；**计入修复轮**（`fixes` 键，`run.log` 标 `修复 <片> k/R`；计数规则唯一来源 = `references/orchestrator-protocol.md`「记账」）→ 回本停点 |
+| `终止` | 停止；保留产物；按 `references/orchestrator-protocol.md`「结束汇报」汇报当前状态 |
 
 ## 验证失败路由
 

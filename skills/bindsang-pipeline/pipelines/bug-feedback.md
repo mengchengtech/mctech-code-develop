@@ -2,8 +2,7 @@
 
 `preflight → 分诊(explorer) → [修复方案(designer) ↔ 审核(reviewer)*] → human-confirm(按风险) → planner → (executor ↔ verifier)* → close`
 
-**内部验证缺陷**（当前 Change 的 verifier `FAIL`）不走本流水线，走 `implement-verify.md` 的 `fix` 循环。  
-**需求/规则变化**（非实现错误）→ 转 `requirement-change.md` 或新 Change，并在 `brief.md`/`decisions-log.md` 记录与 BUG Change 的关联。
+内部验证缺陷（verifier `FAIL`）与外部 BUG、需求/规则变化的区分唯一全文见 `SKILL.md` §11：前者走 `implement-verify.md` 的 `fix` 循环，不进本流水线；实为需求/规则变化（非实现错误）→ 转 `requirement-change.md` 或新 Change，并在 `brief.md` / `decisions-log.md` 记录与 BUG Change 的关联。
 
 ## 触发
 
@@ -59,9 +58,9 @@ explorer 在分诊 ADR 末尾给 **建议路由**；仅主 Agent 可切换流水
 
 ## 循环与预算
 
-- **未解问题 / 无法复现**：同 `design-review.md`「未解问题」；分诊阶段最多 **2 轮** explorer（`bug-triage` + 一次 `explore` 补证）。  
-- **修复方案审核**：L2/L3 适用 `design-review.md` 审核循环（最多 **3 轮** `REVISE`）。L1 无审核轮次。  
-- **实施-验证**：同 `implement-verify.md`（`fix` 优先；最多 **3 轮**）。  
+- **未解问题 / 无法复现**：同 `design-review.md`「未解问题」；分诊阶段轮数 = 记账键 `impacts k/上限`（`bug-triage` + 一次 `explore` 补证；默认上限与耗尽三项选择见 `references/orchestrator-protocol.md`「记账」）。  
+- **修复方案审核**：L2/L3 适用 `design-review.md` 审核循环（`REVISE` = `revisions` 键，上限见「记账」）。L1 无审核轮次。  
+- **实施-验证**：同 `implement-verify.md`（`fix` 优先；轮数 = `fixes` 键，见「记账」）。  
 - verifier 分类为 `NEW_REQUIREMENT`/`SPEC_DEFECT` → **停止 fix**，转 `requirement-change` 或用户裁决。
 
 ## 检查点（确认门）

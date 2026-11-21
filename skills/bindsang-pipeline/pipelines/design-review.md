@@ -30,10 +30,10 @@
 ## 循环与预算
 
 - **未解问题**（explorer/designer 返回 `NEED_INPUT` 或文内未解问题）：需用户答 → 一次提问写入 `decisions-log.md`；需补代码 → explorer `explore` 一次；仍不足 → 再问用户。  
-- **审核循环**：`REVISE` → designer `revise`（读最新审核 ADR + `.pipeline/review/人工意见-K.md`）→ reviewer。自动循环最多 **3 轮**；审核 ADR 的 N 递增。连续两轮 designer 仍有多条不可接受项 → 停问用户。  
+- **审核循环**：`REVISE` → designer `revise`（读最新审核 ADR + `.pipeline/review/人工意见-K.md`）→ reviewer。自动循环轮数 = 记账键 `revisions k/N`（默认上限与耗尽三项选择见 `references/orchestrator-protocol.md`「记账」）；审核 ADR 的 N 递增。**每轮设计与审核保存独立 ADR、不覆盖上一轮，主 Agent 维护轮次与当前有效版本。** 连续两轮 designer 仍有多条不可接受项 → 停问用户。  
 - **复核**：`brief.md` 开关 `design_recheck=on` 时，`APPROVE` 后 designer `recheck`；`ISSUE` 计入当前审核轮次。每份 `APPROVE` 设计最多复核一次。  
-- **人工修订**：用户意见原文 → `.pipeline/review/人工意见-K.md`；要点 → `decisions-log.md`；designer `revise`；默认再 reviewer；用户说「修订后不用评审」则回确认门。**人工驱动不计入** 3 轮自动循环。  
-- 预算耗尽 → 停，汇报路径，不得放宽标准。
+- **人工修订**：用户意见原文 → `.pipeline/review/人工意见-K.md`（每条 `- [K-n] <原文>`，格式见 `references/artifacts.md`）；要点 → `decisions-log.md`；designer `revise`；默认再 reviewer；用户说「修订后不用评审」则回确认门。人工意见标「不可行」→ 立即停下附证据。**人工修订不计入** `revisions` 自动循环额度。  
+- 预算耗尽 → 停，给三项选择（`references/orchestrator-protocol.md`「必须停下询问用户」），不得放宽标准。
 
 ## 检查点（确认门）
 
@@ -56,6 +56,6 @@
 
 探索可按区域（`orchestrator-protocol.md`）。设计/评审/复核：单实例。
 
-## 路由（与主 Skill §8 一致）
+## 路由（用户反馈与修改请求按 `references/decision-routing.md` 唯一载体路由）
 
 `REJECT`/`NEED_INFO` → explorer；`REVISE` → designer；用户扩范围 → 需求变更或新 Change。

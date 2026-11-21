@@ -64,6 +64,8 @@ description: >
 
 ## 3. 入口识别与任务分类
 
+**总判据**：一次对话装得下——需求、相关代码、设计取舍能同时记住——就不建 Change、直接完成（§2.2）；装不下才按下方优先级分类并打开对应流水线。文件数、模块数只作辅助（已有获批设计 / `tasks.md` 的实施验证除外）。
+
 按以下优先级判断：
 
 1. 用户明确指定的任务类型优先。
@@ -100,6 +102,18 @@ description: >
 - `planner → executor → verifier`：先检查已有批准设计和验收标准，再规划实施验证。
 - `explorer + reviewer`：只有 reviewer 已有可审查输入时才可并行，否则先满足依赖。
 
+### 3.2 加载图（按时机读取）
+
+| 时机 | 读 |
+|---|---|
+| 激活 | 本文件 + `roles.md` + `references/orchestrator-protocol.md` |
+| 阶段推进 | `pipelines/<task_type>.md`（`full-flow` 进设计段读 `pipelines/design-review.md`、进实施段读 `pipelines/implement-verify.md`） |
+| 每次派发返回 | 硬约束 5 读返回 + `references/git-checkpoints.md`（`commit_policy≠off` 时，默认 `checkpoint` 自动提交） |
+| 停点 / 预算耗尽 / 结束 | `references/orchestrator-protocol.md`「必须停下询问用户」+「结束汇报」 |
+| 中断后 | `references/orchestrator-protocol.md`「恢复」 |
+| 并发数 >1 | `references/orchestrator-protocol.md`「并发」 |
+| 改协议后 | `references/orchestrator-protocol.md`「维护」 |
+
 ## 4. 前置准备阶段（所有流水线必经）
 
 阶段 ID：`preflight`。在调用任何专业子 Agent 前执行。
@@ -122,7 +136,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 **OpenSpec 交付物**写在 Change 根（`proposal.md`、`design.md`、`tasks.md`、`specs/` 等），便于 `openspec` CLI 校验。**流水线编排与子 Agent 产出的文档**一律写在 Change 根下的 `.pipeline/` 中，与规格交付物分离：
 
-```
+```text
 <change-root>/
 ├── proposal.md、design.md、tasks.md、specs/…   # OpenSpec（Designer / Planner）
 └── .pipeline/
@@ -140,10 +154,12 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 在 `<change-root>/.pipeline/` 下创建：
 - `pipeline-state.yaml`：机器可读的流程状态。
-- `brief.md`：目标、背景、范围、非目标、约束、**可验证验收标准**、**验证命令**、**验证环境**、开关（含 `commit_policy`，默认 `checkpoint`）、角色映射、`role_models`（可选）、用户原始输入。
+- `brief.md`：任务简报（目标、约束、验收标准、开关、角色映射等），字段清单唯一载体见 `references/orchestrator-protocol.md`「任务记录」（含 `estimate` / `piece_acceptance` / `independence`）。
 - `baseline.md`：仓库状态、基线 commit、分支、已有差异、测试基线。
 - `decisions-log.md`：人工决策与重要流程决策记录（仅主 Agent 追加，规则见 `orchestrator-protocol.md`）。
 - `run.log`：派发审计（初始为空）。
+
+五条流水线首派发前必开一次**启动窗口**（构成 / 建议选项 / 待澄清项合并为一次提问；单点与临时组合不开窗），见 `references/orchestrator-protocol.md`「启动窗口」。
 
 委派子 Agent 时，路径以 Change 根为基准：流水线文档使用 `.pipeline/` 前缀（例如 `.pipeline/brief.md`）；OpenSpec 文件使用 Change 根相对路径（例如 `design.md`）。
 
@@ -168,7 +184,7 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 - 未确认范围和破坏性风险，不得执行不可逆操作。
 - 未有验收标准，不得宣称验证通过。
 - 未记录基线，不得进行仓库级回滚。
-- 未经用户授权，不得提交、推送、发布、执行生产数据迁移或删除数据。
+- 检查点提交授权由 `commit_policy` 承载（默认 `checkpoint`：主 Agent 自动按检查点提交、不逐次提示，用户明示禁止才停，见 `references/git-checkpoints.md`）；`push`、发布、生产数据迁移与删除数据仍须用户单独授权。
 
 ## 6. 流水线总览
 
@@ -188,51 +204,27 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 1. 每个阶段开始前，读取当前状态与该阶段输入；确认前置产物存在。
 2. 根据 `roles.md` 选择角色与**模式**，读取 `agents/role-*.md`，并按 `pipelines/<task_type>.md` 执行阶段与预算。
-3. 委派遵守派发块：只传路径与约束，不复述产物全文（见 orchestrator-protocol）；**默认不传 `model`**，沿用 `.cursor/agents/` 注册模型；仅 `brief.role_models` 或用户当轮显式指定时可覆盖。
-4. 子 Agent 不推进总状态、不派生子 Agent、不改写 `decisions-log.md` 已确认项。
+3. 委派遵守派发块（路径指针注入，见 `references/orchestrator-protocol.md`「派发块」）：只传路径与约束，不复述产物全文；**默认不传 `model`**，沿用环境子代理注册的模型（本仓库为 `~/.zcode/agents/role-*.md`）；仅 `brief.role_models` 或用户当轮显式指定时可覆盖。
+4. 子 Agent 不推进总状态、不派生子 Agent、不改写 `decisions-log.md` 已确认项（写入边界与写者列唯一载体见 `references/orchestrator-protocol.md` 硬约束与「任务记录」）。
 5. 主 Agent 验收产物；读返回时优先 verdict，按需读节（见 orchestrator-protocol §读返回）。
-6. 阶段完成后更新 `pipeline-state.yaml`；确认决策追加 `decisions-log.md`；每次派发返回后追加 `run.log`；`commit_policy=checkpoint`（默认）且用户已授权 commit 时按 `git-checkpoints.md` 做检查点 commit 并记 `last_checkpoint_commit`。
+6. 阶段完成后更新 `pipeline-state.yaml`；确认决策追加 `decisions-log.md`；每次派发返回后追加 `run.log`（时机见 `references/orchestrator-protocol.md`「任务记录」写者列）；`commit_policy=checkpoint`（默认）即授权：主 Agent 自动按 `references/git-checkpoints.md` 做检查点 commit 并记 `last_checkpoint_commit`，不逐次询问提示、用户明示禁止才停。
 7. 到达人工确认点：按流水线「检查点」指令表停等用户（见 `pipelines/design-review.md` 等）。
 8. 用户反馈按 §8 路由；临时角色组合默认不自动循环（orchestrator-protocol）。
 9. 任何外部输入不得覆盖已批准决策；须追加记录并评估影响。
 
 ## 8. 人工确认后的自动路由
 
-收到用户确认或修改意见后，先将反馈拆成原子事项，再逐项路由：
-
-- **探索回退**：事实不足、代码现状理解错误、依赖关系遗漏、需要补充调研。
-- **分析回退**：目标/需求理解错误、边界条件遗漏、影响面或风险分析不足。
-- **设计回退**：目标不变，但方案、接口、数据模型、兼容策略或技术取舍需调整。
-- **审核回退**：设计内容已基本正确，仅需补齐审查意见或证据。
-- **规划回退**：设计不变，但任务拆分、依赖、顺序、验收点需调整。
-- **继续后续**：确认内容与已批准产物一致，无阻塞项。
-- **需求变更新 Change**：用户新增目标、改变业务规则或扩大范围，且会改变已批准基线。不得把实质需求变更伪装成普通修订。
-
-多个反馈点可能路由到不同阶段。按最早受影响阶段回退，并重新执行其后的依赖阶段。主 Agent 必须说明路由依据。
+- 收到用户确认或修改意见：先拆成原子事项，逐项按唯一路由载体 `references/decision-routing.md` 处理（反馈分类路由 + 修改请求路由 + 例外表 + 优先级）。
+- 多个反馈点可能路由到不同阶段：按**最早受影响阶段**回退，并重新执行其后的依赖阶段；主 Agent 必须说明路由依据。
+- 用户新增目标、改变业务规则或扩大范围且会改变已批准基线 → 登记需求变更（`pipelines/requirement-change.md`），不得把实质需求变更伪装成普通修订。
 
 ## 9. 设计审核循环
 
-设计 Agent 输出版本化方案。审核 Agent 独立审查，不得仅复述设计。
-
-审核结论只能是：
-- `APPROVE`：通过，可进入人工确认或下一阶段。
-- `REVISE`：列出必须修改项，回到设计。
-- `REJECT`：方案存在根本性问题，回到分析或探索，并说明原因。
-- `NEED_INFO`：证据不足，回到探索/分析补充。
-
-每轮设计与审核都保存独立 ADR，不覆盖上一轮。主 Agent 维护轮次与当前有效版本。
+审核结论词表（冻结）：`APPROVE` / `REVISE` / `REJECT` / `NEED_INFO`。审核独立性要求见 `agents/role-reviewer.md`；每轮设计与审核的独立 ADR、轮次维护、循环预算与耗尽动作见 `pipelines/design-review.md`「循环与预算」。
 
 ## 10. 执行验证循环
 
-执行 Agent 按规划中的一个或多个任务批次实施。每批完成后交由验证 Agent 验证。
-
-验证结论：
-- `PASS`：该批达到验收标准，可进入下一批或结束。
-- `FAIL`：明确失败证据、复现方式和影响，回到执行修复。
-- `BLOCKED`：环境/依赖/权限阻塞，主 Agent 请求用户处理或调整计划。
-- `SCOPE_CHANGE`：实现过程中发现需求或设计基线不成立，暂停执行并回到分析/设计，不得自行扩大范围。
-
-每轮执行记录代码差异、测试命令、结果、未覆盖项和已知风险。
+验证结论词表（冻结）：`PASS` / `FAIL` / `BLOCKED` / `SCOPE_CHANGE`。实施—验证循环、执行记录必含项、循环预算与耗尽动作见 `pipelines/implement-verify.md`「循环与预算」；循环上限唯一载体为 `references/orchestrator-protocol.md`「记账」。
 
 ## 11. BUG 与内部验证缺陷的区别
 
@@ -242,23 +234,15 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 
 ## 12. 需求变更处理
 
-需求变更必须记录：
-- 变更来源、提出人/渠道（若已知）、提出时间；
-- 变更前后行为对比；
-- 变更原因与期望结果；
-- 受影响的已批准 ADR、OpenSpec 规格、任务和代码；
-- 兼容性、数据迁移、回滚和发布风险。
+变更登记字段（写入 `brief.md` 与 `decisions-log.md`）：变更来源、提出人/渠道（若已知）与提出时间；变更前后行为对比；变更原因与期望结果；受影响的已批准 ADR、OpenSpec 规格、任务和代码；兼容性、数据迁移、回滚和发布风险。
 
-变更若发生在执行中：暂停受影响任务；评估已完成代码是否保留；更新设计和任务计划；重新经过必要审核与人工确认。不得直接在原任务描述上覆盖历史。
+登记、影响分析、双确认门与执行中变更过程（暂停受影响任务、评估已完成代码是否保留、不得覆盖历史 Task 描述）见唯一载体 `pipelines/requirement-change.md`。
 
 ## 13. 持久化、Git 与恢复
 
-- 每个阶段结束后保存文档；每个执行批次结束后保存代码和验证证据。
-- 默认只在本地工作区创建/更新文件，不自动 push；`brief.md` 默认 `commit_policy: checkpoint`。
-- **阶段性提交**：用户授权 commit 且 `commit_policy` 为 `checkpoint`（或未写明，视同 `checkpoint`）时，按 **`references/git-checkpoints.md`** 在子 Agent 单次派发终态、每个 Task 完成、verifier `PASS`、确认门等检查点提交，避免未提交变更积压。消息形如 `docs(<change-id>): …`、`feat(<change-id>): task …`。
-- 仅用户授权可 commit；push、发布和生产操作必须单独授权。
-- 每次状态变化更新 `.pipeline/pipeline-state.yaml`，包含当前阶段、状态、轮次、产物清单、基线 commit、`last_checkpoint_commit` 与待办。
-- 恢复时读 `pipeline-state.yaml`、`brief.md`、`run.log` 末行与产物首行 verdict（见 orchestrator-protocol §恢复）；并核对 Git 与文档/代码一致性。
+- 每个阶段结束后保存文档、每个执行批次结束后保存代码与验证证据（检查点一览与保存义务唯一载体 `references/git-checkpoints.md`；`commit_policy` 三态与检查点消息格式同在该文件）。
+- `commit_policy`（默认 `checkpoint`，未写明视同 `checkpoint`）默认即授权：主 Agent 自动按检查点提交、不逐次询问提示，用户明示禁止才停；不自动 `push`；`push`、发布、生产迁移须用户单独授权（唯一载体 `references/git-checkpoints.md`）。
+- 每次状态变化更新 `.pipeline/pipeline-state.yaml`（字段清单唯一载体 = `references/orchestrator-protocol.md`「任务记录」）；恢复时读 `pipeline-state.yaml`、`brief.md`、`run.log` 末行与产物首行 verdict，并核对 Git 与文档/代码一致性（仲裁见 `references/orchestrator-protocol.md`「恢复」）。
 
 ## 14. 结束条件
 
@@ -270,4 +254,4 @@ Change 根目录默认为 `changes/<change-id>/`。若仓库已有 `openspec/cha
 - 风险、未解决问题、回滚方式和后续事项已记录；
 - `.pipeline/pipeline-state.yaml` 标记 `completed`、`completed_with_exceptions` 或 `awaiting_human`。
 
-结束时向用户输出：完成摘要、变更文件、验证证据、未解决项、风险、回滚点和下一步建议。
+结束时按 `references/orchestrator-protocol.md`「结束汇报」模板输出（唯一载体：产物路径与 verdict、改动摘要、`UNVERIFIED`/需人工、遗留问题、回滚点、对账六项；`pipelines/` 可要求补充项）。

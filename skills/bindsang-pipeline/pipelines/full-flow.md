@@ -35,19 +35,13 @@
 
 ## 覆盖项
 
-1. **回设计计数**：自实施阶段回到 designer 最多 **2 次**（与审核循环分开）。每次回设计内 `REVISE` 重新计 3 轮。  
+1. **回设计计数**：自实施阶段回到 designer 的次数 = 记账键 `rollbacks j/上限`（与审核循环分开；回设计后 `revisions` k 清零重计；默认上限与耗尽三项选择见 `references/orchestrator-protocol.md`「记账」）。  
 2. **实施受阻**：executor `BLOCKED(拆分过粗|设计遗漏|设计事实有误)` → 按 `implement-verify.md` 回设计；通过后 executor **`resume`**，不经确认门。`需确认` → 主 Agent 询问。  
 3. **确认门**：等同 `design-review` 检查点 + `implement-verify` 前置中需告知项（并发、验证环境）。
 
 ## 开关（记入 `brief.md`）
 
-| 开关 | 默认 | 用户说 | 效果 |
-|---|---|---|---|
-| auto_confirm | off | 自动 / 不用确认 | 跳过确认门 |
-| pause_after_design | off | 设计后暂停 | 覆盖 auto，确认门必停 |
-| design_recheck | off | 设计者复核 | `APPROVE` 后 designer `recheck` 一步 |
-| concurrency | 3 | 并发 N | 见 orchestrator-protocol |
-| commit_policy | checkpoint | 不要 commit / 仅落盘 | `off`；分步提交见 `references/git-checkpoints.md`（默认已启用） |
+开关默认值、效果与生效时机的唯一载体 = `references/orchestrator-protocol.md`「任务记录」开关表（`auto_confirm` / `pause_after_design` / `design_recheck` / `concurrency` / `commit_policy` / `piece_acceptance` / `role_models`；切换开关不重置计数）；本流水线不另设开关。`commit_policy` 三态与检查点提交授权语义见 `references/git-checkpoints.md`。
 
 ## 结束
 
