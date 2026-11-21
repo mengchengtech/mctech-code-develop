@@ -89,7 +89,7 @@
 - 每个检查点提交后：更新 `pipeline-state.yaml` 的 `last_checkpoint_commit`、`artifacts` 清单。
 - **流程回退**是重新探索/分析/设计/审核/规划，不自动撤销代码；**代码回滚**是撤销某批代码/配置/迁移，必须明确目标基线和数据影响。流程回退（重跑 designer 等）**不自动** `reset` 历史 commit；回滚代码优先 `git revert` 到 `last_checkpoint_commit`、明确 SHA 或针对性反向补丁；不得未经授权执行 `git reset --hard`、强制清理、生产回滚或数据删除；数据库和外部副作用必须有备份、补偿或人工处置方案。
 - **保存与基线记录**：前置准备记录 commit、分支和工作区差异（`baseline.md`）；每个文档阶段在 `.pipeline/` 保存 ADR、在 Change 根保存 OpenSpec，并更新 `pipeline-state.yaml`；每个执行批次保存代码差异、`.pipeline/execution/` 执行记录和测试结果。
-- 恢复会话：读 `brief.md`、`pipeline-state.yaml`、`run.log` 末行与产物首行 verdict（仲裁细则见 `references/orchestrator-protocol.md`「恢复」）；对比 `last_checkpoint_commit` 与工作区；脏树且超出当前 Task 范围 → 停问用户。
+- 恢复会话：恢复读集与一致性仲裁唯一载体 = `references/orchestrator-protocol.md`「恢复」节，本行不重复枚举；回滚语境附加核对：对比 `last_checkpoint_commit` 与工作区，脏树且超出当前 Task 范围 → 停问用户。
 
 ## 脏工作区
 
