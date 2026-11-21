@@ -1,6 +1,6 @@
 # 只实现和验证（implement-verify）
 
-`preflight → planner*` → (executor ↔ verifier)* → close`
+`preflight → planner* → (executor ↔ verifier)* → close`
 
 *已有获批 `tasks.md` 可跳过 planner。不改 OpenSpec 除非 `SCOPE_CHANGE` 流程。
 
