@@ -1,52 +1,26 @@
 # bindsang-pipeline 使用指南
 
-面向使用者的实操说明：何时启用、如何启动主 Skill、五条标准流水线、单点/自定义组合、恢复续跑，以及检查点指令。编排细节以 [`SKILL.md`](SKILL.md)、[`references/orchestrator-protocol.md`](references/orchestrator-protocol.md) 与各 [`pipelines/*.md`](pipelines/) 为准。
+面向使用者的实操说明：何时启用、如何启动主 Skill、五条标准流水线、单点/自定义组合、恢复续跑，以及检查点口令。编排细节以 [`SKILL.md`](SKILL.md)、[`references/orchestrator-protocol.md`](references/orchestrator-protocol.md) 与各 [`pipelines/*.md`](pipelines/) 为准。
 
 ---
 
-## 1. 前置：让 Cursor 认得本 Skill
+## 1. 前置：环境加载与子 Agent 注册
 
 | 方式 | 做法 |
 |---|---|
-| **项目 Skill 路径** | 确保仓库存在 `skills/bindsang-pipeline/SKILL.md`（本仓库已具备）。在 Cursor 设置中将该目录（或整个 `skills/`）加入 **Project Rules / Skills** 扫描路径（与团队 `AGENTS.md` 约定一致）。 |
+| **项目 Skill 路径** | 确保仓库存在 `skills/bindsang-pipeline/SKILL.md`（本仓库已具备）；按所用环境的 Skill / Rules 扫描约定纳入该目录（或整个 `skills/`），与团队 `AGENTS.md` 约定一致。 |
 | **对话中显式加载** | 在新会话第一条消息中 `@` 引用 [`SKILL.md`](SKILL.md)，或说明「按 bindsang-pipeline 编排」。 |
-| **子 Agent** | 本仓库已在 [`.cursor/agents/role-*.md`](../../.cursor/agents/) 注册六个角色（与 [`roles.md`](roles.md) 表一致）。主 Agent 派发时引用 `name`（如 `role-explorer`）及 `pipeline-role`；**默认不在派发参数中指定 `model`**（模型在子 Agent 注册文件的 `model` 中配置）。仅用户显式要求某角色用某模型时，写入 `brief.role_models` 并在当次派发覆盖。完整契约见 `skills/bindsang-pipeline/agents/role-*.md`。未启用 Subagent 时可用 **generalPurpose + 必读角色文件路径** 模拟，协议不变。 |
+| **子 Agent** | 六个角色已注册于环境子代理注册（本仓库为 `~/.zcode/agents/role-*.md`），与 [`roles.md`](roles.md) 表一致。主 Agent 派发时引用 `name`（如 `role-explorer`）及 `pipeline-role`；**默认不在派发参数中指定 `model`**（模型在子 Agent 注册文件的 `model` 中配置）。仅用户显式要求某角色用某模型时，写入 `brief.role_models` 并在当次派发覆盖。完整契约见 `skills/bindsang-pipeline/agents/role-*.md`；注册缺失时按 `roles.md`「环境子代理注册」回退分级兜底。 |
 | **无多 Agent 环境** | 主 Agent 按 `agents/role-*.md` 与 `pipelines/<id>.md` **分阶段顺序执行**，仍须落盘 `.pipeline/` 与 OpenSpec，遵守相同门禁。 |
 
 ---
 
 ## 2. 一分钟决策：用不用流水线
 
-### 2.1 应该用（命中任一条 → 考虑 bindsang）
-
-| 场景 | 建议 `task_type` |
-|---|---|
-| 新功能、大重构、跨模块、公共接口/契约变更 | `full-flow` |
-| 只要方案 / 设计 / 架构评审，暂不写业务代码 | `design-review` |
-| 已有获批 OpenSpec / 设计，要按 Task 实施并验收 | `implement-verify` |
-| 需求规则、行为、范围相对**已批准基线**发生变化 | `requirement-change` |
-| 用户 / 业务 / 监控报告的 BUG、崩溃、数据不一致 | `bug-feedback` |
-| 继续未完成的 Change | 读 `<change-root>/.pipeline/pipeline-state.yaml` 续跑 |
-| 点名 `explorer` / `designer` / … 或描述角色顺序 | 单点派发或 §6 自定义组合 |
-| 关键词：流水线、子智能体、多 Agent、bindsang | 由主 Agent 按 §3 分类 |
-
-### 2.2 不应该用（直接让主 Agent 完成，不建 Change）
-
-- 单模块小改、一两处边界清晰修改  
-- **已定位根因** 的缺陷且未要求流水线  
-- 样式、文案、无行为变化的配置微调  
-- 仅依赖升级（无配套改造）  
-- 代码解释、走读、一次性代码评审（非独立 reviewer 委派）  
-- 概念咨询、与仓库无关问答  
-- 用户明确：「不要流水线 / 不用子 Agent / 你直接改」
-
-### 2.3 轻量路径（L1）
-
-用户要小改但未禁止流水线时：主 Agent 可合并探索+分析、简化审核，**仍须** `brief.md`、基线、必要验证与 `.pipeline/` 记录。
-
-### 2.4 「先问再用」
-
-当流水线标注「先问再用」（跨多文件、不熟代码、多方案、验收不明等）时，主 Agent 应用**一句话**说明多 Agent 代价后**询问**；用户同意再 `preflight`。
+- 应该用 / 不应该用（场景 → `task_type` 触发表、不建 Change 的不使用清单、点名角色与关键词分类）：唯一载体 = [`SKILL.md`](SKILL.md) §2/§3 触发表与总判据。
+- 轻量路径 L1：小改但未禁止流水线时，可合并探索与分析、设计审核快速检查、规划简化为任务清单；基线 / 风险 / 验证 / 记录门禁不减，详见 `SKILL.md` §5。
+- 「先问再用」（跨多文件、不熟代码、多方案取舍、验收不明等）：主 Agent 用一句话说明多 Agent 代价后询问，用户同意再 preflight（各流水线条件见 `pipelines/*.md`「触发」）。
+- 继续 / 恢复未完成 Change：读 `<change-root>/.pipeline/pipeline-state.yaml` 续跑（示例见 §4.2 F）；单点派发与自定义组合机制见 `SKILL.md` §3.1。
 
 ---
 
@@ -55,12 +29,12 @@
 | `task_type` | 典型路径（缩写） | 详细定义 |
 |---|---|---|
 | `full-flow` | preflight → 探索/分析 → 设计↔审核 → **确认门** → 规划 → 实施↔验证 → 结束 | [`pipelines/full-flow.md`](pipelines/full-flow.md) |
-| `design-review` | preflight → 探索* → 设计↔审核* → 复核* → **确认门** → 等待实施 | [`pipelines/design-review.md`](pipelines/design-review.md) |
-| `implement-verify` | preflight → 规划* → 实施↔验证* → 结束 | [`pipelines/implement-verify.md`](pipelines/implement-verify.md) |
+| `design-review` | preflight → 探索＊ → 设计↔审核＊ → 复核＊ → **确认门** → 等待实施 | [`pipelines/design-review.md`](pipelines/design-review.md) |
+| `implement-verify` | preflight → 规划＊ → 实施↔验证＊ → 结束 | [`pipelines/implement-verify.md`](pipelines/implement-verify.md) |
 | `requirement-change` | 登记 → 变更影响 → **影响确认** → 设计↔审核 → **确认门** → replan → 实施↔验证 | [`pipelines/requirement-change.md`](pipelines/requirement-change.md) |
-| `bug-feedback` | 分诊 → 路由 → 修复方案* → 审核* → 确认门* → 规划 → 实施↔验证 | [`pipelines/bug-feedback.md`](pipelines/bug-feedback.md) |
+| `bug-feedback` | 分诊 → 路由 → 修复方案＊ → 审核＊ → 确认门＊ → 规划 → 实施↔验证 | [`pipelines/bug-feedback.md`](pipelines/bug-feedback.md) |
 
-`*` = 可按复杂度/级别跳过或缩短；`**确认门**` = 停等用户指令。
+`＊` = 可按复杂度/级别跳过或缩短；`**确认门**` = 停等用户指令。
 
 **产物位置**
 
@@ -74,7 +48,7 @@
 
 ### 4.1 Skill 触发（推荐给编排者）
 
-在 Cursor 对话中使用下列任一方式，主 Agent 应加载 `bindsang-pipeline` 并按协议执行：
+在对话中使用下列任一方式，主 Agent 应加载 `bindsang-pipeline` 并按协议执行：
 
 | 方式 | 示例 |
 |---|---|
@@ -105,13 +79,7 @@ Change 根目录：changes/<YYYYMMDD-短名>/
 
 #### B. 只设计 + 审核
 
-```text
-@skills/bindsang-pipeline/pipelines/design-review.md
-出 OpenSpec 与设计 ADR，不要改业务源码。
-目标：…
-验收标准：…
-设计后暂停确认（pause_after_design / 默认确认门）。
-```
+- 场景：只出 OpenSpec 与设计 ADR、不改业务源码，设计后停在确认门（`pause_after_design` 或默认确认门）；与 A 的差异 = 换用 `pipelines/design-review.md`、无实施段。按 §3 路径表改写 A/C 使用。
 
 #### C. 已有 Spec，实施 + 验证
 
@@ -125,25 +93,11 @@ Change 根：openspec/changes/<id>/
 
 #### D. 需求变更
 
-```text
-@skills/bindsang-pipeline/pipelines/requirement-change.md
-在 Change `<id>` 上登记需求变更：
-- 变更前行为：…
-- 变更后行为：…
-- 原因：…
-先走 change-impact，影响确认后再更新 OpenSpec。
-```
+- 场景：在既有 Change 上登记需求变更（变更前 / 后行为、原因），先走 `change-impact` 影响分析再更新 OpenSpec；与 A/C 的差异 = 含**双确认门**（影响确认 + 规范确认门，规范门默认不得 `auto_confirm` 跳过，见 §5.4）。按 §3 路径表改写 A/C 使用。
 
 #### E. 外部 BUG
 
-```text
-@skills/bindsang-pipeline/pipelines/bug-feedback.md
-BUG 现象：…
-复现步骤：…
-环境/版本：…
-严重级别：L2（或让主 Agent 分诊）
-关联 Change（如有）：<related_change_id>
-```
+- 场景：报告 BUG 现象 / 复现步骤 / 环境版本，由主 Agent 分诊定级别（L1–L3 级别裁剪，见 §5.5）；与 A 的差异 = 走 `pipelines/bug-feedback.md` 分诊 → 路由 → 修复链，Spec / 规则错时升级为需求变更。按 §3 路径表改写 A/C 使用。
 
 #### F. 恢复未完成 Change
 
@@ -156,152 +110,68 @@ BUG 现象：…
 
 #### G. 单点角色（不调完整流水线）
 
-```text
-@skills/bindsang-pipeline/references/orchestrator-protocol.md
-单点派发（仍需最小 preflight 或只读任务）：
-- Change 根：changes/<id>/
-- 角色：verifier，模式：task
-- 输入：.pipeline/brief.md、tasks.md、最近执行 ADR
-- 输出：.pipeline/verification/ADR-验证报告-rN.md
-```
+- 场景：只派一个角色跑一次工作（如 explorer 调研模块、verifier `task` 验证当前批次）；与 A/C 的差异 = 不进流水线循环，仍需最小 preflight，派发表记入 `run.log`（见 §5.7）。按 §3 路径表改写 A/C 使用。
 
 #### H. 自定义角色顺序（临时流水线）
 
-```text
-@skills/bindsang-pipeline/SKILL.md
-自定义顺序：explorer → designer → reviewer → designer → reviewer
-目标：…（不写业务代码）
-请写入 .pipeline/custom-pipeline.md，task_type: custom；
-默认不自动 REVISE 循环，每轮结束汇报等我指令。
-```
+- 场景：用户指定角色顺序且**不匹配**五条标准流水线，写 `.pipeline/custom-pipeline.md` 并标 `task_type: custom`；与 A 的差异 = 默认**不自动** REVISE / FAIL 循环，每步结束汇报等用户指令（机制见 `SKILL.md` §3.1）。按 §3 路径表改写 A/C 使用。
 
 ### 4.3 主 Agent 派发子 Agent 的 Prompt 块（编排者参考）
 
-每次委派**只传路径与约束**，不复述全文（见 orchestrator-protocol「派发块」）：
+每次委派**只传路径与约束**，不复述产物全文；派发块首行固定句与字面模板唯一载体 = `references/orchestrator-protocol.md`「派发块」（Change 根、角色 / 模式、输入 / 输出、轮次、并发白名单、追加约束只收紧）。并发实施时增加：**步骤编号、文件白名单**、输出 `执行记录-<组>.md`（见 `pipelines/implement-verify.md`）。
 
-```text
-Change 根：<绝对或仓库相对路径>
-角色：designer
-模式：spec
-必读：.pipeline/brief.md、.pipeline/decisions-log.md
-输入：.pipeline/exploration/ADR-探索记录.md（如有）
-输出：proposal.md、design.md、specs/…、.pipeline/decision/ADR-设计决策-r1.md
-轮次：1
-附加约束：（可选，只收紧，如「不得扩展 scope」）
-请遵守 skills/bindsang-pipeline/agents/role-designer.md 全文。
-```
+### 4.4 使用环境子代理
 
-并发实施时增加：**步骤编号、文件白名单**、输出 `执行记录-<组>.md`（见 `implement-verify.md`）。
-
-### 4.4 在 Cursor 中使用子 Agent
-
-项目已提供 [`.cursor/agents/role-*.md`](../../.cursor/agents/)（`name` + `pipeline-role` + 委派用 `description`）。测试示例：
+子 Agent 注册于环境子代理注册（本仓库为 `~/.zcode/agents/role-*.md`；`name` + `pipeline-role` + 委派用 `description`，见 [`roles.md`](roles.md)）。测试示例：
 
 ```text
 使用 role-explorer 子 Agent：Change 根 changes/demo/，模式 explore，
 输入 .pipeline/brief.md，输出 .pipeline/exploration/ADR-探索记录.md
 ```
 
-主 Agent 解析顺序：`AGENTS.md` 指定 → `pipeline-role` / `name` → `.cursor/agents/` → generalPurpose + `agents/role-*.md` 路径。
+主 Agent 解析顺序：`AGENTS.md` 指定 → `pipeline-role` / `name` → 环境子代理注册 → 宿主通用 agent（general-purpose）+ `agents/role-*.md` 路径兜底（回退分级与全部落兜底时停问见 `roles.md`「环境子代理注册」）。
 
-**模型**：调整各角色默认模型 → 改 `.cursor/agents/role-*.md` 的 `model`，而非在派发 prompt 里写模型名。临时按角色换模型（用户口头指定）→ 主 Agent 记入 `brief.role_models` 后仅对该角色传入 `model`。
+**模型**：调整各角色默认模型 → 改环境子代理注册文件（本仓库为 `~/.zcode/agents/role-*.md`）的 `model`，而非在派发 prompt 里写模型名。临时按角色换模型（用户口头指定）→ 主 Agent 记入 `brief.role_models` 后仅对该角色传入 `model`。
 
-同步更新契约时：先改 `skills/bindsang-pipeline/agents/role-*.md`，再对齐 `.cursor/agents/` 中的摘要、`description` 与 `model`（orchestrator-protocol「副本校验」）。
+同步更新契约时：先改 `skills/bindsang-pipeline/agents/role-*.md`，再对齐环境子代理注册副本的摘要、`description` 与 `model`（`references/orchestrator-protocol.md`「副本校验」）。
 
 ---
 
-## 5. 按场景：完整使用说明
+## 5. 按场景：使用说明
 
 ### 5.1 新功能 / 大重构（full-flow）
 
-**触发**：直接使用 — 新功能、大重构、跨模块、用户要完整流水线。  
-**先问再用**：≥5 文件或 ≥2 模块、不熟代码、多方案、验收不明。
-
-**你要提供**：目标、验收标准、验证命令/环境、是否允许并发（默认 3）。
-
-**`brief.md` 开关**（用户可说出口令，主 Agent 写入 brief）：
-
-| 开关 | 默认 | 用户说 | 效果 |
-|---|---|---|---|
-| `auto_confirm` | off | 自动 / 不用确认 | 跳过设计确认门（full-flow） |
-| `pause_after_design` | off | 设计后暂停 | 强制确认门 |
-| `design_recheck` | off | 设计者复核 | APPROVE 后 designer `recheck` |
-| `concurrency` | 3 | 并发 N | 探索/实施并发上限 |
-| `commit_policy` | checkpoint | 不要 commit / 仅落盘 | `off`；检查点见 [`git-checkpoints.md`](references/git-checkpoints.md) |
-| `role_models` | （空） | 「explorer 用 composer-2.5-fast」等按角色指定模型 | 仅所列角色当次派发覆盖 `model`；未列出角色仍用 `.cursor/agents/` 注册默认 |
-
-**设计确认门指令**（与 design-review 相同，见下表 §5.2）。
-
-**预算（自动循环）**：设计审核 REVISE 最多 3 轮；从实施回设计最多 2 次；实施-验证 FAIL 修复最多 3 轮。
-
-**示例 Prompt**：见 §4.2 A。
-
----
+- 触发：新功能、大重构、跨模块；「先问再用」条件见 `pipelines/full-flow.md`「触发」。要提供：目标、验收标准、验证命令 / 环境、是否允许并发（默认 3）。
+- 开关与口令：开关定义（默认值 / 生效时机 / 切换不重置计数）唯一载体 = `references/orchestrator-protocol.md`「任务记录」开关表；口令 → 开关映射见 §8。
+- 确认门与预算：设计确认门同 §5.2；自动循环预算唯一载体 = `references/orchestrator-protocol.md`「记账」（`revisions` / `rollbacks` / `fixes` 键与耗尽三项选择）。
+- 示例 Prompt：见 §4.2 A。
 
 ### 5.2 只设计评审（design-review）
 
-**触发**：出设计/方案并评审；不要立即实施。  
-**不适用**：要实施 → `full-flow` / `implement-verify`；极小改动。
-
-**路径**：`preflight` → 可选 explorer → `designer.spec` ↔ `reviewer.design` → 可选 `designer.recheck` → **确认门** → `awaiting-implementation`。
-
-**确认门 — 用户指令表**（主 Agent 停等）：
-
-| 用户说 | 动作 |
-|---|---|
-| 实施 / 确认 / 继续 | 可接 `implement-verify` 或结束等待 |
-| 修订：&lt;意见&gt; | 写入人工意见 → designer `revise` → 默认再 reviewer |
-| 已手改 | 以现稿为准；要点进 decisions-log；可跳过评审直实施 |
-| 再评审 | reviewer 重审当前稿 |
-| 复核 | designer `recheck` 一次 |
-| 补探索：&lt;范围&gt; | explorer → designer `revise` → reviewer |
-| 并发：N | 写 brief → 回检查点 |
-| 结束 | 停；汇报状态 |
-
-**示例 Prompt**：见 §4.2 B。
-
----
+- 触发：出设计 / 方案并评审、不立即实施；要实施 → `full-flow` / `implement-verify`，极小改动不适用（见 `pipelines/design-review.md`「触发」）。
+- 路径：`preflight` → 可选 explorer → `designer.spec` ↔ `reviewer.design` → 可选 `designer.recheck` → **确认门** → `awaiting-implementation`。
+- 确认门 = 停等用户的裁决点：八条指令（实施 / 修订 / 已手改 / 再评审 / 复核 / 补探索 / 并发 / 结束）+ 含糊回复追问一次，指令表唯一完整输出 = `pipelines/design-review.md`「检查点（确认门）」。
+- 示例 Prompt：见 §4.2 B。
 
 ### 5.3 实施与验证（implement-verify）
 
-**触发**：已确认设计/OpenSpec，要实施+验证。  
-**前置硬条件**：获批 OpenSpec + `tasks.md`（或等价）；独立运行须 reviewer `APPROVE` 或用户确认记入 `decisions-log.md`。
-
-**路径**：`preflight` → `planner.plan`（可跳过若已有 tasks）→ `executor` ↔ `verifier`。
-
-**executor 模式**：`implement` | `concurrent` | `integrate` | `resume` | `fix`  
-**verifier 模式**：`task`（单批）| `change`（整 Change）
-
-**特殊返回**：
-
-- verifier `SCOPE_CHANGE` / SPEC 类 → 回 explorer/designer/planner，**不是** executor 私自改 Spec  
-- verifier 环境阻塞 → 问用户：解除 / **环境豁免**（记 decisions-log）/ 终止  
-- executor `BLOCKED(拆分过粗|设计遗漏|设计事实有误)` → 独立运行停并建议 design-review；full-flow 内自动回设计
-
-**示例 Prompt**：见 §4.2 C。
-
----
+- 触发与前置硬条件：已确认设计 / OpenSpec 要实施 + 验证；须有获批 OpenSpec + `tasks.md`；独立运行须 reviewer `APPROVE` 或用户确认记入 `decisions-log.md`（见 `pipelines/implement-verify.md`「前置」）。
+- 路径：`preflight` → `planner.plan`（已有 tasks 可跳过）→ `executor` ↔ `verifier`。executor 模式：`implement` / `concurrent` / `integrate` / `resume` / `fix`；verifier 模式：`task`（单批）/ `change`（整 Change）。
+- **特殊返回**：verifier `SCOPE_CHANGE` / SPEC 类 → 回 explorer / designer / planner，**不是** executor 私自改 Spec；verifier 环境阻塞 → 问用户：解除 / **环境豁免**（记 `decisions-log.md`）/ 终止；executor `BLOCKED(拆分过粗|设计遗漏|设计事实有误)` → 独立运行停并建议 design-review，`full-flow` 内自动回设计。
+- 逐片验收（开关 `piece_acceptance=on`）：片验证 `PASS` 后停等 继续 / 修复 / 终止，见 `pipelines/implement-verify.md`「逐片验收」。
+- 示例 Prompt：见 §4.2 C。
 
 ### 5.4 需求变更（requirement-change）
 
-**触发**：用户明确改规则/行为；或 verifier `SCOPE_CHANGE` / `NEW_REQUIREMENT`。
-
-**双确认门**：
-
-1. **影响确认**（change-impact 后）：批准范围 / 缩小 / 放弃 / 修订  
-2. **规范确认门**（审核 APPROVE 后）：同 design-review；**默认不得**用 `auto_confirm` 跳过
-
-**执行中 Change**：暂停受影响 Task（`paused`），不覆盖历史 Task 文案；`planner.replan` 写补偿 Task。
-
-**示例 Prompt**：见 §4.2 D。
-
----
+- 触发：用户明确改规则 / 行为；或 verifier `SCOPE_CHANGE` / `NEW_REQUIREMENT`。
+- **双确认门**：① **影响确认**（change-impact 后）：批准范围 / 缩小 / 放弃 / 修订；② **规范确认门**（审核 APPROVE 后）：同 design-review；**默认不得**用 `auto_confirm` 跳过。
+- 执行中 Change：暂停受影响 Task（`paused`），不覆盖历史 Task 文案；`planner.replan` 写补偿 Task。
+- 示例 Prompt：见 §4.2 D。
 
 ### 5.5 外部 BUG（bug-feedback）
 
-**与 implement-verify 内 FAIL 区分**：verifier 在本 Change 内发现的问题 → `executor.fix` 循环，**不**新建 bug-feedback。
-
-**级别裁剪**（主 Agent 记入 brief / state）：
+- 与 implement-verify 内 FAIL 区分：verifier 在本 Change 内发现的问题 → `executor.fix` 循环，**不**新建 bug-feedback（区分唯一全文 = `SKILL.md` §11）。
+- **级别裁剪**（主 Agent 记入 brief / state）：
 
 | 级别 | 设计+审核 | 确认门 | 规划 |
 |---|---|---|---|
@@ -309,104 +179,65 @@ Change 根：<绝对或仓库相对路径>
 | L2 | spec + 1 轮 reviewer | 建议停 | 标准 plan |
 | L3 | 完整 design-review 段 | **必须**停 | plan + 里程碑 |
 
-**分诊后路由**：实现缺陷 → 修复链；Spec/规则错 → `requirement-change` 或新 Change；无法复现 → 停等补充。
-
-**确认门指令**：修复/继续、修订、不是 BUG 是需求变更、仅记录不修、结束。
-
-**示例 Prompt**：见 §4.2 E。
-
----
+- 分诊后路由（无法复现 / 实现缺陷 / Spec·规则错 / 环境因素）见 `pipelines/bug-feedback.md`「分诊后路由」；确认门指令（修复 / 修订 / 不是 BUG 是需求变更 / 仅记录不修 / 结束）见 `pipelines/bug-feedback.md`「检查点（确认门）」。
+- 示例 Prompt：见 §4.2 E。
 
 ### 5.6 恢复 / 继续 Change
 
-**触发词**：继续、恢复、`change-id`、接着做。
-
-**主 Agent 必读**：`pipeline-state.yaml`、`brief.md`、`run.log` 末行、相关 ADR **首行 verdict**；核对 Git 与工作区。
-
-**示例 Prompt**：见 §4.2 F。
-
----
+- 触发词：继续、恢复、`change-id`、接着做。
+- 主 Agent 必读：`pipeline-state.yaml`、`brief.md`、`run.log` 末行、相关 ADR **首行 verdict**；核对 Git 与工作区（一致性仲裁见 `references/orchestrator-protocol.md`「恢复」）。
+- 示例 Prompt：见 §4.2 F。
 
 ### 5.7 单点派发
 
-**适用**：只探索一块代码、只跑一次 reviewer、只验证当前批次等。
-
-**协议**：仍建议有 `brief.md` 最小目标；派发表记入 `run.log`。
-
-**示例 Prompt**：见 §4.2 G。
-
----
+- 适用：只探索一块代码、只跑一次 reviewer、只验证当前批次等。
+- 协议：仍建议有 `brief.md` 最小目标（至少含「目标」）；派发表记入 `run.log`（细则见 `references/orchestrator-protocol.md`「选用」）。
+- 示例 Prompt：见 §4.2 G。
 
 ### 5.8 自定义角色组合（task_type: custom）
 
-**适用**：用户指定顺序且**不匹配**五条标准流水线，例如 `explorer → designer` 或 `planner → executor → verifier`。
-
-**落盘**：`.pipeline/custom-pipeline.md`；`pipeline-state.yaml` 标记 `task_type: custom` 与角色序列。
-
-**默认**：临时组合**不自动** REVISE/FAIL 循环；每步结束汇报，等用户再派。
-
-**示例 Prompt**：见 §4.2 H。
+- 适用：用户指定顺序且**不匹配**五条标准流水线（机制唯一载体 = `SKILL.md` §3.1）。
+- 落盘：`.pipeline/custom-pipeline.md`；`pipeline-state.yaml` 标记 `task_type: custom` 与角色序列。
+- 默认：临时组合**不自动** REVISE / FAIL 循环；每步结束汇报，等用户再派。
+- 示例 Prompt：见 §4.2 H。
 
 ---
 
 ## 6. 角色与模式速查
 
-派发时必须 **角色 + 模式**（见 [`roles.md`](roles.md)）：
-
-| 角色 | 常用模式 |
-|---|---|
-| explorer | `explore` / `analyze` / `bug-triage` / `change-impact` |
-| designer | `decide-record` / `spec` / `change-update` / `revise` / `recheck` |
-| reviewer | `design` / `decision` / `change` |
-| planner | `plan` / `replan` |
-| executor | `implement` / `fix` / `concurrent` / `integrate` / `resume` |
-| verifier | `task` / `change` |
-
-**返回码（主 Agent 读首行）**：reviewer `APPROVE|REVISE|REJECT|NEED_INFO`；verifier `PASS|FAIL|BLOCKED|SCOPE_CHANGE`；explorer/planner `COMPLETED|NEED_INPUT|BLOCKED|FAILED`；executor `COMPLETED|BLOCKED(<类型>)|FAILED`。
+派发必须**角色 + 模式**；模式词表与返回码词表唯一来源 = [`roles.md`](roles.md)「角色与模式」表（契约与流水线不得增删模式名），回退分级与独立性等级见同文件「环境子代理注册」。
 
 ---
 
 ## 7. 人工反馈后的自动路由（主 Agent）
 
-用户在一次确认中可能给出多条意见，主 Agent 按最早受影响阶段回退（见 `SKILL.md` §8）：
-
-- 事实/调研不足 → explorer  
-- 目标/影响分析错 → explorer `analyze`  
-- 方案/接口/模型错 → designer  
-- 设计大体对、补审查 → reviewer  
-- Task 拆分错 → planner  
-- 实质扩范围/改规则 → **新需求变更** 或新 Change（不得伪装成普通修订）
+用户反馈与修改请求按**最早受影响阶段**回退；唯一路由载体 = [`references/decision-routing.md`](references/decision-routing.md)（反馈分类路由 + 修改请求路由 + 例外表 + 优先级），主 Agent 必须说明路由依据。
 
 ---
 
 ## 8. 常用用户口令（检查点与开关）
 
-下列口令可在**任意检查点**或会话中说，主 Agent 写入 `brief.md` / `decisions-log.md` 后生效：
+下列口令可在**任意检查点**或会话中说，主 Agent 写入 `brief.md` / `decisions-log.md` 后生效；开关定义唯一载体 = `references/orchestrator-protocol.md`「任务记录」开关表，本表只保留口令 → 开关映射：
 
-| 口令 | 含义 |
+| 口令 | 写入 / 动作 |
 |---|---|
-| 并发：N | `brief.concurrency = N` |
-| 自动 / 不用确认 | `auto_confirm = on`（full-flow / L1 bug；**需求变更规范门默认仍须停**） |
+| 并发：N | `concurrency = N` |
+| 自动 / 不用确认 | `auto_confirm = on`（需求变更规范确认门默认仍须停） |
 | 设计后暂停 | `pause_after_design = on` |
 | 设计者复核 | `design_recheck = on` |
-| 修订：… | 人工意见文件 + designer `revise` |
-| 已手改 | 以仓库现稿为准，要点进 decisions-log |
+| 修订：… | 人工意见文件 + designer `revise`（见 §5.2） |
+| 已手改 | 以仓库现稿为准，要点进 `decisions-log.md` |
 | 不是 BUG，是需求变更 | 切换 `requirement-change` |
-| 环境豁免 | verifier 环境阻塞时记入 decisions-log，标注 UNVERIFIED 项 |
-| 可以 commit | 授权后按默认 `commit_policy=checkpoint` 在检查点提交；见 [`git-checkpoints.md`](references/git-checkpoints.md) |
-| 不要 commit / 仅落盘 | `brief.commit_policy = off` |
+| 环境豁免 | verifier 环境阻塞时记入 `decisions-log.md`，标注 UNVERIFIED 项 |
+| 可以 commit | `commit_policy = checkpoint`（默认已自动按检查点提交、不逐次提示，本口令为显式再确认；三态见 `references/git-checkpoints.md`） |
+| 不要 commit / 仅落盘 | `commit_policy = off` |
 | 分步提交 / 每步 commit | 与默认 `checkpoint` 相同（可显式写入 brief） |
 
 ---
 
 ## 9. 结束时期待输出
 
-主 Agent 应给出（≤15 行 + 路径）：
-
-- Change 根、`pipeline-state` 终态  
-- 关键 verdict、改动文件、验证证据  
-- `UNVERIFIED` / 需人工项、遗留风险、回滚点  
-- 下一步建议（如接 `implement-verify`）
+结束汇报模板唯一载体 = `references/orchestrator-protocol.md`「结束汇报」（≤20 行；必含产物路径与 verdict、改动摘要、`UNVERIFIED` / 需人工项、遗留问题、回滚点、对账 d / 预估六项；`pipelines/` 可要求补充项）。
 
 ---
 
@@ -414,27 +245,15 @@ Change 根：<绝对或仓库相对路径>
 
 | 文档 | 用途 |
 |---|---|
-| [`SKILL.md`](SKILL.md) | 主 Agent 契约、分类、裁剪、门禁 |
+| [`SKILL.md`](SKILL.md) | 主 Agent 契约、分类与总判据、加载图、复杂度裁剪、门禁 |
 | [`USAGE.md`](USAGE.md) | 本使用指南 |
-| [`roles.md`](roles.md) | 角色、模式、Subagent 注册 |
+| [`roles.md`](roles.md) | 角色、模式词表唯一来源、环境子代理注册 |
 | [`pipelines/`](pipelines/) | 五条流水线阶段表与预算 |
-| [`references/orchestrator-protocol.md`](references/orchestrator-protocol.md) | 派发、并发、恢复、选用 |
-| [`references/artifacts.md`](references/artifacts.md) | 目录与 ADR/OpenSpec 分工 |
-| [`references/git-checkpoints.md`](references/git-checkpoints.md) | 何时 commit、谁提交、消息格式 |
+| [`references/orchestrator-protocol.md`](references/orchestrator-protocol.md) | 派发块、硬约束、启动窗口、记账、并发、恢复、结束汇报、维护 |
+| [`references/artifacts.md`](references/artifacts.md) | 目录与 ADR / OpenSpec 分工 |
+| [`references/git-checkpoints.md`](references/git-checkpoints.md) | `commit_policy` 三态、检查点 C0–C16 时机与消息格式（唯一载体） |
+| [`references/decision-routing.md`](references/decision-routing.md) | 反馈分类路由与修改请求路由（唯一载体） |
 
-### 阶段性提交（摘要）
-
-默认 `brief.md` 含 `commit_policy: checkpoint`。用户说「可以 commit」即按检查点提交；说「不要 commit」→ 主 Agent 写 `commit_policy: off`。
-
-| 时机 | 谁 commit | 典型内容 |
-|---|---|---|
-| 每个子 Agent 派发终态（`COMPLETED` / `APPROVE` 等） | 主 Agent | 当次 ADR、OpenSpec、`tasks.md`（C1–C7） |
-| 每个 Task `COMPLETED` | executor | 该 Task 源码与测试（C8） |
-| 该 Task verifier `PASS` | executor 或主 Agent | 实现 + 验证 ADR（C9） |
-| 并行组 + `integrate` 完成 | executor | 整组改动（C10） |
-| 人工确认门 / planner / 变更影响批准 | 主 Agent | 里程碑文档（C4–C6、C12） |
-| Change 结束 | 主 Agent | state 收尾（C15） |
-
-不宜提交：REVISE/FAIL 半成品、并发组中间态。详见 [`git-checkpoints.md`](references/git-checkpoints.md)。
+检查点提交：默认 `brief.md` 含 `commit_policy: checkpoint`——主 Agent 自动按检查点提交、不逐次询问提示，用户明示禁止才停（「不要 commit / 仅落盘」→ `commit_policy: off`）。检查点消息格式与 C0–C16 时机唯一载体 = [`references/git-checkpoints.md`](references/git-checkpoints.md)；不宜单独 commit 的半成品 / 并发中间态亦见该文件。
 
 仓库总览入口：根目录 [`README.md`](../../README.md)「Agent 流水线」一节。
